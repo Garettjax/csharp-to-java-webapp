@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="webapp.Token" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,7 +25,19 @@
 		</form>
 	</div>
 	<div>
-		${name}
+	<%ArrayList data = (ArrayList)request.getAttribute("name");
+	int count = 1;
+	out.println("<div>");
+	for (int i = 0; i < data.size(); i++) { Token token = (Token)data.get(i);
+	if (token.getRowNumber() == count) {
+		out.println(token.getLexeme());
+	}
+	else {
+		out.println("</div>");
+		out.println("<div>");
+		out.println(token.getLexeme());
+		count++;
+	}%><%}%>
 	</div>
 </body>
 </html>

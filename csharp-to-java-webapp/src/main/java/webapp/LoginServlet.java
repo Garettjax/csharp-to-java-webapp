@@ -1,7 +1,6 @@
 package webapp;
 
 import java.io.IOException;
-
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,37 +25,42 @@ public class LoginServlet extends HttpServlet {
 		
 //		String t = request.getParameter("name");
 //		System.out.println(t);
-		CustomParser customParser = new CustomParser(request.getParameter("name"));
-		tokens = customParser.getAllTokens(customParser);
-		
-		Iterator<Token> itr = tokens.iterator();
-		while (itr.hasNext()) {
-			Token next = itr.next();
-			if (next.getRowNumber() == -1) {
-				itr.remove();
+		String code = request.getParameter("name");
+		if(code != "") {
+			CustomParser customParser = new CustomParser(code);
+			tokens = customParser.getAllTokens(customParser);
+			
+			Iterator<Token> itr = tokens.iterator();
+			while (itr.hasNext()) {
+				Token next = itr.next();
+				if (next.getRowNumber() == -1) {
+					itr.remove();
+				}
 			}
-		}
 
-		tokens = Translation.TranslateTokensToJava(tokens);
-		
-		//PrintWriter pr = new PrintWriter("");
-		String temp = "";
-		if(showTokens) {
-			for (Token element : tokens) {
-				temp += element.rowNum + "                ";
-				temp += element.getLexeme() + "                ";
-				temp += element.getTokenType() + "                ";
-//				pr.println();
-//				pr.println("*************************************");
-//				pr.println(element.rowNum);
-//				pr.println(element.getLexeme());
-//				pr.println(element.getTokenType());
-//				pr.println("*************************************");
-//				pr.println();
-			}
+			tokens = Translation.TranslateTokensToJava(tokens);
+			//PrintWriter out = response.getWriter();
+			
+//			String temp = "";
+//			if(showTokens) {
+//				for (Token element : tokens) {
+//					out.println("<div>");
+//					out.println(element.getLexeme());
+//					out.println("</div>");
+////					out.println("<div>");
+////					out.println("<div>");
+////					out.println("<div>");
+////					out.println("<div>");
+////					out.println("<div>");
+////					temp += element.rowNum + "              ";
+////					temp += element.getLexeme() + "                ";
+////					temp += element.getTokenType() + "                ";
+//				}
+//			}
+			
+			request.setAttribute("name", tokens);
 		}
 		
-		request.setAttribute("name", temp);
 		
 		
 		
