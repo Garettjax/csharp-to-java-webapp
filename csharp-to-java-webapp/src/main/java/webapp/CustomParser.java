@@ -242,7 +242,7 @@ public class CustomParser {
 			}
 		}
 
-		tokens.add(new Token("End of File", "EOF", self.currentLine));
+		tokens.add(new Token("End of File", "EOF", self.currentLine + 1));
 		return tokens;
 	}
 

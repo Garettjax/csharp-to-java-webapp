@@ -16,7 +16,7 @@
 		<form class="form-group" action="/login.do" method="post">
 			<label for="codeInput">Input C# Code</label>
 			<div>
-				<textarea id="codeInput" rows='10' name="name"></textarea>
+				<textarea id="codeInput" rows='10' name="name" value=""></textarea>
 			</div>
 			<div>
 				<input class="btn btn-primary" type="submit" value="Translate">
@@ -24,9 +24,10 @@
 			
 		</form>
 	</div>
-	<div>
+	<div style='background-color:#F1F1F1;'>
 	<%ArrayList data = (ArrayList)request.getAttribute("name");
 	int count = 1;
+	out.println("<label for='output'>Java Translation</label>");
 	out.println("<div>");
 	for (int i = 0; i < data.size(); i++) { Token token = (Token)data.get(i);
 	if (token.getRowNumber() == count) {
