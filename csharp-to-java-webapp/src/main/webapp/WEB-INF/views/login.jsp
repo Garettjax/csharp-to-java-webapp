@@ -14,30 +14,32 @@
 <body>
 	<div>
 		<form class="form-group" action="/login.do" method="post">
-			<label for="codeInput">Input C# Code</label>
+			<label class="offset-1" for="codeInput">Input C# Code</label>
 			<div>
-				<textarea id="codeInput" rows='10' name="name" value=""></textarea>
+				<textarea class="col-10 form-control offset-1" name="name" rows="10">test</textarea>
 			</div>
 			<div>
-				<input class="btn btn-primary" type="submit" value="Translate">
+				<input class="col-10 btn btn-primary btn-lg btn-block offset-1" type="submit" value="Translate">
 			</div>
 			
 		</form>
 	</div>
-	<div style='background-color:#F1F1F1;'>
+	<div class="offset-1 col-10"  style='background-color:#F1F1F1;'>
 	<%ArrayList data = (ArrayList)request.getAttribute("name");
-	int count = 1;
-	out.println("<label for='output'>Java Translation</label>");
-	out.println("<div>");
-	for (int i = 0; i < data.size(); i++) { Token token = (Token)data.get(i);
-	if (token.getRowNumber() == count) {
-		out.println(token.getLexeme());
-	}
-	else {
-		out.println("</div>");
+	if(data != null) {
+		int count = 1;
+		out.println("<label for='output'>Java Translation</label>");
 		out.println("<div>");
-		out.println(token.getLexeme());
-		count++;
+		for (int i = 0; i < data.size(); i++) { Token token = (Token)data.get(i);
+		if (token.getRowNumber() == count) {
+			out.println(token.getLexeme());
+		}
+		else {
+			out.println("</div>");
+			out.println("<div>");
+			out.println(token.getLexeme());
+			count++;
+		}
 	}%><%}%>
 	</div>
 </body>
