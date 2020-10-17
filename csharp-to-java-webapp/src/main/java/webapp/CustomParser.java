@@ -63,7 +63,7 @@ public class CustomParser {
 									//	System.out.println("current "+ self.currentChar);
 									//	System.out.println("next "+ self.nextChar);
 									//	System.out.println(currentLine);
-									tokens.add(new Token((Character.toString(EnumTokenType.getChar())), "EQUAL_TO", self.currentLine));
+									tokens.add(new Token((Character.toString(EnumTokenType.getChar()) + "="), "EQUAL_TO", self.currentLine));
 									self.moveForward(self);
 								}else
 								tokens.add(new Token(Character.toString(EnumTokenType.getChar()) , "ASSIGN_OP", self.currentLine));
@@ -84,7 +84,7 @@ public class CustomParser {
 								//	System.out.println("current "+ self.currentChar);
 								//	System.out.println("next "+ self.nextChar);
 								//	System.out.println(currentLine);
-									tokens.add(new Token((Character.toString(EnumTokenType.getChar())), "DEC_OP", self.currentLine));
+									tokens.add(new Token((Character.toString(EnumTokenType.getChar()) + "-"), "DEC_OP", self.currentLine));
 									self.moveForward(self);
 								}else
 								tokens.add(new Token((Character.toString(EnumTokenType.getChar())), "SUBTRACTION_OP", self.currentLine));
@@ -107,7 +107,7 @@ public class CustomParser {
 								//	System.out.println("current "+ self.currentChar);
 								//	System.out.println("next "+ self.nextChar);
 								//	System.out.println(currentLine);
-									tokens.add(new Token((Character.toString(EnumTokenType.getChar())), "INC_OP", self.currentLine));
+									tokens.add(new Token((Character.toString(EnumTokenType.getChar()) + "+"), "INC_OP", self.currentLine));
 									self.moveForward(self);
 								}else
 
