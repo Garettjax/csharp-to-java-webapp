@@ -23,9 +23,8 @@ public class LoginServlet extends HttpServlet {
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		
-//		String t = request.getParameter("name");
-//		System.out.println(t);
 		String code = request.getParameter("name");
+		String initialCode = "Test 1234";
 		if(code != "") {
 			CustomParser customParser = new CustomParser(code);
 			tokens = customParser.getAllTokens(customParser);
@@ -39,32 +38,14 @@ public class LoginServlet extends HttpServlet {
 			}
 
 			tokens = Translation.TranslateTokensToJava(tokens);
-			//PrintWriter out = response.getWriter();
-			
-//			String temp = "";
-//			if(showTokens) {
-//				for (Token element : tokens) {
-//					out.println("<div>");
-//					out.println(element.getLexeme());
-//					out.println("</div>");
-////					out.println("<div>");
-////					out.println("<div>");
-////					out.println("<div>");
-////					out.println("<div>");
-////					out.println("<div>");
-////					temp += element.rowNum + "              ";
-////					temp += element.getLexeme() + "                ";
-////					temp += element.getTokenType() + "                ";
-//				}
-//			}
 			
 			request.setAttribute("name", tokens);
+			request.setAttribute("initialCode", code);
+			
+			Executer.Execute(tokens);
 		}
 		
 		
-		
-		
-//		request.getRequestDispatcher("/WEB-INF/views/viewCode.jsp").forward(request, response);
 		request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
 	}
 }
