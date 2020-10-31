@@ -42,7 +42,11 @@ public class LoginServlet extends HttpServlet {
 			request.setAttribute("name", tokens);
 			request.setAttribute("initialCode", code);
 			
-			Executer.Execute(tokens);
+			try {
+				Executer.Execute(tokens);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		
