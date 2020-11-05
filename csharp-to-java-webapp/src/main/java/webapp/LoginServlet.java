@@ -25,6 +25,7 @@ public class LoginServlet extends HttpServlet {
 		
 		String code = request.getParameter("name");
 		String initialCode = "Test 1234";
+		ArrayList<String> output = new ArrayList<String>();
 		if(code != "") {
 			CustomParser customParser = new CustomParser(code);
 			tokens = customParser.getAllTokens(customParser);
@@ -43,7 +44,7 @@ public class LoginServlet extends HttpServlet {
 			request.setAttribute("initialCode", code);
 			
 			try {
-				Executer.Execute(tokens);
+				output = Executer.Execute(tokens);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

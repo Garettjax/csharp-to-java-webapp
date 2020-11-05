@@ -135,7 +135,7 @@ public class CustomParser {
 								//	System.out.println("current "+ self.currentChar);
 								//	System.out.println("next "+ self.nextChar);
 								//	System.out.println(currentLine);
-									tokens.add(new Token((Character.toString(EnumTokenType.getChar())), "GT_E_OPERATOR", self.currentLine));
+									tokens.add(new Token((Character.toString(EnumTokenType.getChar()) + "="), "GT_E_OPERATOR", self.currentLine));
 									self.moveForward(self);
 								}else
 
@@ -150,7 +150,7 @@ public class CustomParser {
 								//	System.out.println("current "+ self.currentChar);
 								//	System.out.println("next "+ self.nextChar);
 								//	System.out.println(currentLine);
-									tokens.add(new Token((Character.toString(EnumTokenType.getChar())), "LT_E_OPERATOR", self.currentLine));
+									tokens.add(new Token((Character.toString(EnumTokenType.getChar()) + "="), "LT_E_OPERATOR", self.currentLine));
 									self.moveForward(self);
 								}else
 								tokens.add(new Token(Character.toString(EnumTokenType.getChar()), "LT_OPERATOR", self.currentLine));

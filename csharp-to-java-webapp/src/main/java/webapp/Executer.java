@@ -5,10 +5,11 @@ import java.util.List;
 public class Executer {
 	static List<Variable> variables;
 	
-	public static void Execute(ArrayList<Token> tokens) throws Exception {
+	public static ArrayList<String> Execute(ArrayList<Token> tokens) throws Exception {
 		ArrayList<Token> namespaceTokens = checkNamespaceStructure(tokens);
 		ArrayList<Token> classTokens = null;
 		ArrayList<Token> mainMethodTokens = null;
+		ArrayList<String> output = null;
 		variables = new ArrayList<Variable>();
 		
 		
@@ -22,6 +23,7 @@ public class Executer {
 			}
 			
 		}
+		return output;
 	}
 	
 	public static ArrayList<Token> checkNamespaceStructure(ArrayList<Token> tokens) throws Exception {
@@ -150,6 +152,7 @@ public class Executer {
 		
 		Token token = tokens.get(0);
 		if((((token.getLexeme().equals("int"))||(token.getLexeme().equals("string"))||(token.getLexeme().equals("bool")) ||(token.getLexeme().equals("double"))) && !(tokens.get(2).getTokenType().equals("ASSIGN_OP")))){
+			//Declaration
 			if (tokens.get(1).getTokenType().equals("IDENTIFIER") && tokens.get(2).getTokenType().equals("SEMICOLON")) {
 				switch(tokens.get(0).getLexeme().toLowerCase()) {
 					case "int" :
@@ -173,6 +176,7 @@ public class Executer {
 					}
 				}
 			}
+			//Assignment
 			else if(tokens.get(1).getLexeme().equals("=")&&(tokens.get(0).getTokenType().equals("IDENTIFIER"))) {//checks if it is the assignment statement = and the name
 				String varName = tokens.get(0).getLexeme();
 				boolean varExists = false;
@@ -190,13 +194,14 @@ public class Executer {
 				}
 				return new ArrayList<Token>(tokens.subList(4, tokens.size() - 1));
 			}
+			//Declaration/assignment
 			else if(tokens.get(2).getLexeme().equals("=")&&(tokens.get(1).getTokenType().equals("IDENTIFIER"))) {//checks if it is the assignment statement = and the name
 			
 				switch(token.getLexeme().toLowerCase()) {
 				   case "int" :
 				            if(tokens.get(3).getTokenType().equals("INTEGER_LITERAL")){
 				            	variables.add(new Variable("INTEGER_LITERAL", tokens.get(3).getLexeme(), tokens.get(1).getLexeme()));
-				            	return new ArrayList<Token>(tokens.subList(4, tokens.size() - 1));
+				            	return new ArrayList<Token>(tokens.subList(5, tokens.size() - 1));
 				            }
 				            else {
 				            	throwException("Exception: Invalid string found at line # " + token.getRowNumber());
@@ -206,14 +211,15 @@ public class Executer {
 				   case "string" :
 				      if(tokens.get(3).getTokenType().equals("STRING_LITERAL")){
 				    	  variables.add(new Variable("STRING_LITERAL", tokens.get(3).getLexeme(), tokens.get(1).getLexeme()));
-				    	  return new ArrayList<Token>(tokens.subList(4, tokens.size() - 1));
+				    	  return new ArrayList<Token>(tokens.subList(5, tokens.size() - 1));
 				      }
 				      break; 
+				      
 	
 			       case "bool" :
 			    	  if(tokens.get(3).getLexeme().toLowerCase().equals("true") || tokens.get(3).getLexeme().toLowerCase().equals("false")){
 			            	variables.add(new Variable("BOOLEAN", tokens.get(3).getLexeme(), tokens.get(1).getLexeme()));
-			            	return new ArrayList<Token>(tokens.subList(4, tokens.size() - 1));
+			            	return new ArrayList<Token>(tokens.subList(5, tokens.size() - 1));
 			            }
 			            else {
 			            	throwException("Exception: Invalid boolean found at line # " + token.getRowNumber());
@@ -223,7 +229,7 @@ public class Executer {
 			         case "double" :
 			        	 if(tokens.get(3).getTokenType().equals("REAL_CONSTANT")){
 				            	variables.add(new Variable("DOUBLE", tokens.get(3).getLexeme(), tokens.get(1).getLexeme()));
-				            	return new ArrayList<Token>(tokens.subList(4, tokens.size() - 1));
+				            	return new ArrayList<Token>(tokens.subList(5, tokens.size() - 1));
 				            }
 				            else {
 				            	throwException("Exception: Invalid double found at line # " + token.getRowNumber());
@@ -237,12 +243,36 @@ public class Executer {
 		else if (token.getLexeme().equals("while")||token.getLexeme().equals("for")||(token.getLexeme().equals("Console.WriteLine"))) {
 			switch(token.getLexeme().toLowerCase()) {
 			   case "while" :
-			            if((tokens.get(1).getTokenType().equals("OPEN_BRACKET"))&&((tokens.get(5).getTokenType().equals("CLOSE_BRACKET")))){
-			            
-			            }
-			            else {
-			            	throwException("Exception: Invalid while found at line # " + token.getRowNumber());
-			            }
+				   		//Need more conditional checks here for var1 || var2 && var3
+				   		int start = 0, stop = 0;
+				   		for (int i = 1; i < tokens.size() - 1; i++) {
+				   			if(tokens.get(i).getTokenType().equals("LEFT_PAREN")) {
+				   				start = i;
+				   			}
+				   			else if(tokens.get(i).getTokenType().equals("RIGHT_PAREN")) {
+				   				stop = i;
+				   				break;
+				   			}
+				   		}
+					   if (checkConditionalStatement(new ArrayList<Token>(tokens.subList(start + 1, stop)))) {
+		            		if (tokens.get(stop + 2).getTokenType().equals("LEFT_CURLY")) {
+		            			start = stop + 2;
+		            			for (int i = start; i < tokens.size() - 1; i++) {
+						   			if(tokens.get(i).getTokenType().equals("RIGHT_CURLY")) {
+						   				stop = i;
+						   				break;
+						   			}
+						   		}
+		            			//Begin Execution of while loop here
+		            			
+		            		}
+		            		else {
+		            			throwException("Exception: Invalid while statement syntax found at line # " + token.getRowNumber());
+		            		}
+		            	}
+					   else {
+						   throwException("Exception: Invalid conditional statement syntax found at line # " + token.getRowNumber());
+					   }
 			      
 			   case "for" :
 		            if(tokens.get(1).getTokenType().equals("OPEN_BRACKET")&&((tokens.get(15).getTokenType().equals("CLOSE_BRACKET")))){
@@ -269,6 +299,71 @@ public class Executer {
 		}
 		
 		return null;
+	}
+	
+	public static boolean checkConditionalStatement(ArrayList<Token> tokens) {
+		boolean var1good = false;
+		boolean var2good = false;
+		boolean condition = false;
+		
+		if (tokens.size() == 3) {
+			if (doesVarExist(tokens.get(0).getLexeme())) {
+				if (doesVarHaveValue(tokens.get(0).getLexeme())) {
+					var1good = true;
+				}
+			}
+			if (doesVarExist(tokens.get(2).getLexeme())) {
+				if (doesVarHaveValue(tokens.get(2).getLexeme())) {
+					var2good = true;
+				}
+			}
+			
+			if (!tokens.get(0).getLexeme().equals("")) {
+				var1good = true;
+			}
+
+			if (tokens.get(1).getTokenType().equals("LT_E_OPERATOR") 
+					|| tokens.get(1).getTokenType().equals("GT_E_OPERATOR")
+					|| tokens.get(1).getTokenType().equals("GT_OPERATOR")
+					|| tokens.get(1).getTokenType().equals("LT_OPERATOR")
+					|| tokens.get(1).getTokenType().equals("EQUAL_TO")){
+				condition = true;
+			}
+			
+			if (!tokens.get(2).getLexeme().equals("")) {
+				var2good = true;
+			}
+			
+			if (var1good && var2good && condition) {
+				if (tokens.get(0).getTokenType().equals(tokens.get(2).getTokenType())) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public static boolean doesVarExist(String name) {
+		
+		for (Variable var : variables) {
+			if (var.name.equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean doesVarHaveValue(String name) {
+		
+		for (Variable var : variables) {
+			if (var.name.equals(name)) {
+				if (!var.value.equals("-1")) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	public static boolean hasCurlyStructure(ArrayList<Token> tokens) {
