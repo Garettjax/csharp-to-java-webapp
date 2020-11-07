@@ -4,12 +4,13 @@ import java.util.List;
 
 public class Executer {
 	static List<Variable> variables;
+	static ArrayList<String> output = new ArrayList<String>();
 	
 	public static ArrayList<String> Execute(ArrayList<Token> tokens) throws Exception {
 		ArrayList<Token> namespaceTokens = checkNamespaceStructure(tokens);
 		ArrayList<Token> classTokens = null;
 		ArrayList<Token> mainMethodTokens = null;
-		ArrayList<String> output = null;
+		
 		variables = new ArrayList<Variable>();
 		
 		
@@ -240,9 +241,9 @@ public class Executer {
 					   throwException("Exception: Assignment statement invalid syntax at line # " + token.getRowNumber());
 					}
 				}
-		else if (token.getLexeme().equals("while")||token.getLexeme().equals("for")||(token.getLexeme().equals("Console.WriteLine"))) {
+		else if (token.getLexeme().equals("while")||token.getLexeme().equals("for")||(token.getLexeme().equals("System.out.println")) ) {
 			switch(token.getLexeme().toLowerCase()) {
-			   case "while" :
+			   case "while":
 				   		//Need more conditional checks here for var1 || var2 && var3
 				   		int start = 0, stop = 0;
 				   		for (int i = 1; i < tokens.size() - 1; i++) {
@@ -255,7 +256,8 @@ public class Executer {
 				   			}
 				   		}
 					   if (checkConditionalStatement(new ArrayList<Token>(tokens.subList(start + 1, stop)))) {
-		            		if (tokens.get(stop + 2).getTokenType().equals("LEFT_CURLY")) {
+						   ArrayList<Token> condition = new ArrayList<Token>(tokens.subList(start + 1, stop));
+		            		if (tokens.get(stop + 1).getTokenType().equals("LEFT_CURLY")) {
 		            			start = stop + 2;
 		            			for (int i = start; i < tokens.size() - 1; i++) {
 						   			if(tokens.get(i).getTokenType().equals("RIGHT_CURLY")) {
@@ -263,6 +265,11 @@ public class Executer {
 						   				break;
 						   			}
 						   		}
+		            			ArrayList<Token> tempWhileTokens = new ArrayList<Token>(tokens.subList(start, stop));
+		            			executeWhileLoop(tempWhileTokens, condition);
+
+		            			
+		            			tempWhileTokens = new ArrayList<Token>(tempWhileTokens.subList(6, tempWhileTokens.size() - 1));
 		            			//Begin Execution of while loop here
 		            			
 		            		}
@@ -273,6 +280,7 @@ public class Executer {
 					   else {
 						   throwException("Exception: Invalid conditional statement syntax found at line # " + token.getRowNumber());
 					   }
+					   break;
 			      
 			   case "for" :
 		            if(tokens.get(1).getTokenType().equals("OPEN_BRACKET")&&((tokens.get(15).getTokenType().equals("CLOSE_BRACKET")))){
@@ -282,7 +290,7 @@ public class Executer {
 		            	throwException("Exception: Invalid for found at line # " + token.getRowNumber());
 		            }
 		     
-		      case "Console.WriteLine" :
+		      case "System.out.println" :
 		            if(tokens.get(1).getTokenType().equals("OPEN_BRACKET")&&(tokens.get(2).getTokenType().equals("\""))&&(tokens.get(3).getTokenType().equals("STRING_LITERAL"))&&(tokens.get(4).getTokenType().equals("OPEN_BRACKET")&&(tokens.get(4).getTokenType().equals("OPEN_BRACKET")))){
 		            
 		            }
@@ -299,6 +307,68 @@ public class Executer {
 		}
 		
 		return null;
+	}
+	
+	public static void executeWhileLoop(ArrayList<Token> whileTokens, ArrayList<Token> condition) throws Exception{
+		//TODO: support !=
+		switch (condition.get(1).getLexeme()) {
+			case "<":
+				while(Integer.parseInt(condition.get(0).getLexeme()) < Integer.parseInt(condition.get(2).getLexeme())) {
+					
+				}
+				break;
+			case ">":
+				while(Integer.parseInt(condition.get(0).getLexeme()) > Integer.parseInt(condition.get(2).getLexeme())) {
+					
+				}
+				break;
+			case "<=":
+				while(Integer.parseInt(getVarValue(condition.get(0).getLexeme())) <= Integer.parseInt(getVarValue(condition.get(2).getLexeme()))) {
+        			if (whileTokens.get(0).getLexeme().equals("System.out.println")) {
+        				printConsole(whileTokens);
+        				whileTokens = new ArrayList<Token>(whileTokens.subList(6, whileTokens.size() - 1));
+	    			}
+	    			
+        			else if (doesVarExist(whileTokens.get(0).getLexeme())) {
+	    				if(doesVarHaveValue(whileTokens.get(0).getLexeme())) {
+	    					//TODO: check type
+	    				}
+	    				else {
+	    					throwException("Exception: Variable (" + whileTokens.get(0).getLexeme() + "does not have a value, at line # " + condition.get(0).getRowNumber());
+	    				}
+	    			}
+	    			else {
+	    				throwException("Exception: Variable (" + whileTokens.get(0).getLexeme() + "has not been declared, at line # " + condition.get(0).getRowNumber());
+	    			}
+				}
+				break;
+			case ">=":
+				while(Integer.parseInt(condition.get(0).getLexeme()) >= Integer.parseInt(condition.get(2).getLexeme())) {
+					
+				}
+				break;
+			case "==":
+				while(Integer.parseInt(condition.get(0).getLexeme()) == Integer.parseInt(condition.get(2).getLexeme())) {
+					
+				}
+				break;
+		}
+	}
+	
+	public static void printConsole(ArrayList<Token> printTokens) throws Exception{
+		if (printTokens.get(0).getLexeme().equals("System.out.println")) {
+			if (printTokens.get(1).getTokenType().equals("LEFT_PAREN") && printTokens.get(3).getTokenType().equals("RIGHT_PAREN")) {
+				if (printTokens.get(4).getTokenType().equals("SEMICOLON")) {
+					output.add(printTokens.get(2).getLexeme());
+				}
+				else {
+					throwException("Exception: Missing semicolon at line # " + printTokens.get(4).getRowNumber());
+				}
+			}
+			else {
+				throwException("Exception: Missing parenthesis at line # " + printTokens.get(3).getRowNumber());
+			}
+		}
 	}
 	
 	public static boolean checkConditionalStatement(ArrayList<Token> tokens) {
@@ -335,9 +405,10 @@ public class Executer {
 			}
 			
 			if (var1good && var2good && condition) {
-				if (tokens.get(0).getTokenType().equals(tokens.get(2).getTokenType())) {
-					return true;
-				}
+//				if (tokens.get(0).getTokenType().equals(tokens.get(2).getTokenType())) {
+//					return true;
+//				}
+				return true;
 			}
 		}
 		
@@ -364,6 +435,27 @@ public class Executer {
 			}
 		}
 		return false;
+	}
+	
+	public static String getVarValue(String variable) throws Exception{
+		try {
+			if (!variable.matches("[0-9]+")) {
+				for (Variable var : variables) {
+					if (var.name.equals(variable)) {
+						if (!var.value.equals("-1")) {
+							return var.getValue();
+						}
+					}
+				}
+			}
+			else {
+				return variable;
+			}
+		}
+		catch (Exception ex){
+			throwException("Exception: Variable has no value");
+		}
+		return "-1";
 	}
 	
 	public static boolean hasCurlyStructure(ArrayList<Token> tokens) {
