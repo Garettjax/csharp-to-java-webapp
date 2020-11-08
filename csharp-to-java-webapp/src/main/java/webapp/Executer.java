@@ -156,7 +156,7 @@ public class Executer {
 	public static ArrayList<Token> mainExecution(ArrayList<Token> tokens) throws Exception {
 		
 		Token token = tokens.get(0);
-		if((((token.getLexeme().equals("int"))||(token.getLexeme().equals("string"))||(token.getLexeme().equals("bool")) ||(token.getLexeme().equals("double"))) && !(tokens.get(2).getTokenType().equals("ASSIGN_OP")))){
+		if((((token.getLexeme().equals("int"))||(token.getLexeme().equals("string"))||(token.getLexeme().equals("bool")) ||(token.getLexeme().equals("double"))) && (!(tokens.get(2).getTokenType().equals("ASSIGN_OP"))) && tokens.get(2).getTokenType().equals("SEMICOLON"))){
 			//Declaration
 			if (tokens.get(1).getTokenType().equals("IDENTIFIER") && tokens.get(2).getTokenType().equals("SEMICOLON")) {
 				switch(tokens.get(0).getLexeme().toLowerCase()) {
@@ -298,14 +298,6 @@ public class Executer {
 						   throwException("Exception: Invalid conditional statement syntax found at line # " + token.getRowNumber());
 					   }
 					   break;
-			      
-			   case "for" :
-		            if(tokens.get(1).getTokenType().equals("OPEN_BRACKET")&&((tokens.get(15).getTokenType().equals("CLOSE_BRACKET")))){
-		            
-		            }
-		            else {
-		            	throwException("Exception: Invalid for found at line # " + token.getRowNumber());
-		            }
 		     
 		      case "System.out.println" :
 		            if(tokens.get(1).getTokenType().equals("OPEN_BRACKET")&&(tokens.get(2).getTokenType().equals("\""))&&(tokens.get(3).getTokenType().equals("STRING_LITERAL"))&&(tokens.get(4).getTokenType().equals("OPEN_BRACKET")&&(tokens.get(4).getTokenType().equals("OPEN_BRACKET")))){
@@ -338,15 +330,18 @@ public class Executer {
 		    					}
 		    				}
 		    				ArrayList<Token> tempIfTokens = new ArrayList<Token>(tokens.subList(start + 1, stop));
+		    				ArrayList<Token> remainingTokens = new ArrayList<Token>(tokens.subList(stop + 1, tokens.size()));
+		    				
 		    				executeIfLoop(tempIfTokens, IFcondition);
 		    				
-		    				if (tempIfTokens.size() == 5) {
-		    					tempIfTokens.clear();
-	        					return tempIfTokens;
-	        				}
-	        				else {
-	        					return new ArrayList<Token>(tempIfTokens.subList(5, tempIfTokens.size()));
-	        				}
+		    				return remainingTokens;
+//		    				if (tempIfTokens.size() == 5) {
+//		    					tempIfTokens.clear();
+//	        					return tempIfTokens;
+//	        				}
+//	        				else {
+//	        					return new ArrayList<Token>(tempIfTokens.subList(5, tempIfTokens.size()));
+//	        				}
 		    				
 		    				//tempIfTokens = new ArrayList<Token>(tempIfTokens.subList(6, tempIfTokens.size() - 1));
 		    				//Begin Execution of while loop here
@@ -360,6 +355,33 @@ public class Executer {
 		    	   else {
 		    		   throwException("Exception: Invalid conditional statement syntax found at line # " + token.getRowNumber());
 		    	   }
+		      case "for" :
+		    		if(tokens.get(1).getTokenType().equals("OPEN_BRACKET")&&((tokens.get(13).getTokenType().equals("CLOSE_BRACKET")))){
+		    				//first part for for loop
+	    				if(tokens.get(2).getLexeme().toLowerCase().equals("int")&&((tokens.get(3).getTokenType().equals("IDENTIFIER")))&&(tokens.get(4).getLexeme().equals("="))&&((tokens.get(5).getTokenType().equals("INTEGER_LITERAL")))) {
+	    				
+	    					//second part conditional 
+	    					//possibly break into subarray
+	    					
+	    					//third part conditional
+	    					if(((tokens.get(11).getTokenType().equals("IDENTIFIER")))){
+	    						switch((tokens.get(12)).getTokenType()) {
+	    						case "INC_OP":
+	    							
+	    							break;
+	    						case "DEC_OP":
+	    							break;
+	    							
+	    						default:
+		    				
+    							}
+    						}
+    					}
+    				}
+		    		
+		    		else {
+		    			throwException("Exception: Invalid for found at line # " + token.getRowNumber());
+		    		}
 		     
 			   default : 
 				   throwException("Exception: Assignment statement invalid syntax at line # " + token.getRowNumber());
@@ -432,11 +454,11 @@ public class Executer {
 	    					}
 	    				}
 	    				else {
-	    					throwException("Exception: Variable (" + whileTokens.get(0).getLexeme() + "does not have a value, at line # " + condition.get(0).getRowNumber());
+	    					throwException("Exception: Variable (" + whileTokens.get(0).getLexeme() + " does not have a value, at line # " + condition.get(0).getRowNumber());
 	    				}
 	    			}
 	    			else {
-	    				throwException("Exception: Variable (" + whileTokens.get(0).getLexeme() + "has not been declared, at line # " + condition.get(0).getRowNumber());
+	    				throwException("Exception: Variable (" + condition.get(0).getLexeme() + "has not been declared, at line # " + condition.get(0).getRowNumber());
 	    			}
 				}
 				break;
@@ -551,7 +573,7 @@ public class Executer {
 				if(left < right) {
 					if (ifTokens.get(0).getLexeme().equals("System.out.println")) {
 						printConsole(ifTokens);
-						ifTokens = new ArrayList<Token>(ifTokens.subList(0, ifTokens.size()));
+						//ifTokens = new ArrayList<Token>(ifTokens.subList(0, ifTokens.size()));
 					}
 					
 				/*	if (doesVarExist(ifTokens.get(0).getLexeme())) {
@@ -569,7 +591,7 @@ public class Executer {
 					
 						if (ifTokens.get(0).getLexeme().equals("System.out.println")) {
 							printConsole(ifTokens);
-							ifTokens = new ArrayList<Token>(ifTokens.subList(6, ifTokens.size() - 1));
+							//ifTokens = new ArrayList<Token>(ifTokens.subList(6, ifTokens.size() - 1));
 						}
 						
 					/*	if (doesVarExist(ifTokens.get(0).getLexeme())) {
@@ -587,7 +609,7 @@ public class Executer {
 				if(left <= right) {
 					if (ifTokens.get(0).getLexeme().equals("System.out.println")) {
 						printConsole(ifTokens);
-						ifTokens = new ArrayList<Token>(ifTokens.subList(6, ifTokens.size() - 1));
+						//ifTokens = new ArrayList<Token>(ifTokens.subList(6, ifTokens.size() - 1));
 					}
 					
 				/*	if (doesVarExist(ifTokens.get(0).getLexeme())) {

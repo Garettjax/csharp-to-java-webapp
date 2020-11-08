@@ -8,70 +8,116 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset= UTF-8">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+  
 <title>Insert title here</title>
 <style type="text/css" media="screen">
     #codeEditor { 
         top: 0;
         height: 500px;
-        width: 500px;
+        width:50%;
     }
+    #translation { 
+        top: 0;
+        height: 500px;
+        width:50%;
+    }
+    .float-container {
+    border: 3px solid #fff;
+    padding: 20px;
+	}
+	
+	.float-child {
+	    width: 50%;
+	    float: left;
+	    padding: 20px;
+	} 
 </style>
 <script type="text/javascript">
-	//var initial = 'namespace Loops\n\t{\n\t\tinternal class Program\n{\npublic static void Main(string[] args)\n{\nint test1 == 1;\nwhile (test1 <= 4)\n{\nConsole.WriteLine("Test 1 Passed (prints 4 times)");\ntest1++;\n}\n\nfor (int test2 = 1; test2 <= 4; test2++)\nConsole.WriteLine("Test 2 Passed (should print 4 times)");\nint test3 = 21;\ndo\n{\nConsole.WriteLine("If this line prints once, Test 3 Passed");\ntest3++;\n} while (test3 >= 20);\nConsole.WriteLine("Test 4 Passed if prints once");\n}\n}\n}';
-	
+	//var initial = 'namespace Loops\n\t{\n\t\tinternal class Program\n{\npublic static void Main(string[] args)\n{\nint test1 = 1;\nwhile (test1 <= 4)\n{\nConsole.WriteLine("Test 1 Passed (prints 4 times)");\ntest1++;\n}\n\n\n\nint test3 = 21;\ndo\n{\nConsole.WriteLine("If this line prints once, Test 3 Passed");\ntest3++;\n} while (test3 >= 20);\nConsole.WriteLine("Test 4 Passed if prints once");\n}\n}\n}';
+	var initial = 'namespace Loops\n{\n\tinternal class Program\n\t{\n\t\tpublic static void Main(string[] args)\n\t\t{\n\t\tint test1;\n\t\ttest1 = 2;\n\t\tstring test4 = "something here";\n\t\twhile (test1 <= 4)\n\t\t{\n\t\t\tConsole.WriteLine("Test 1 Passed (prints 4 times)");\n\t\t\ttest1++;\n\t\t}\n\t\tif (test1 <= 10){\n\t\tConsole.WriteLine("Test something Passed (prints 4 times)");\n\t\t}\n\t}\n\t}\n}';
 </script>
 </head>
 <body>
 	<div>
 		<form class="form-group" action="/login.do" method="post">
 			<label class="offset-1" for="codeInput">Input C# Code</label>
-			<div>
-				<div id="codeEditor" class="offset-1" ></div>
-				<textarea  id="codeSubmit" class="col-10 form-control offset-1" name="name" rows="10"></textarea>
+			<div class="float-container">
+				<span>
+					<div class="float-child" id="codeEditor" class="offset-1" ></div>
+					<textarea  id="codeSubmit" class="col-10 form-control offset-1" name="name" rows="10" style="display:none"></textarea>
+					<div class="float-child" id="translation" class="offset-1" ></div>
+				</span>
 			</div>
 			<div>
-				<input class="col-10 btn btn-primary btn-lg btn-block offset-1" type="submit" value="Translate">
+				<input style="width:20%; margin-left:250px" class=" btn btn-secondary btn-lg btn-block offset-1" type="submit" value="Translate">
 			</div>
 			
 		</form>
 	</div>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js" type="text/javascript" charset="utf-8"></script>
 	<script>
-		//var editor = ace.edit("codeEditor");
-	    //editor.setTheme("ace/theme/monokai");
+		var editor1 = ace.edit("codeEditor");
+	    editor1.setTheme("ace/theme/monokai");
 	    //editor.session.setMode("ace/mode/javascript");
-	    //editor.session.setValue(initial);
-	    //var textarea = document.getElementById("codeSubmit");
-	    //textarea.value = initial;
+	    editor1.session.setValue(initial);
+	    var textarea = document.getElementById("codeSubmit");
+	    //textarea.value = editor1.getValue();
+	    
+	    var editor2 = ace.edit("translation");
+	    editor2.setTheme("ace/theme/monokai");
+	    textarea.value = editor1.getSession().getValue();
+
+	    editor1.getSession().on("change", function () {
+	    	//debugger;
+	    	textarea.value = editor1.getSession().getValue();
+	    });
 	</script>
 	<div class="offset-1 col-10"  style='background-color:#F1F1F1;'>
+	<%! public String value = "";%>
 	<%ArrayList translation = (ArrayList)request.getAttribute("name");
 	if(translation != null) {
 		int count = 1;
-		out.println("<label for='output'>Java Translation</label>");
-		out.println("<div>");
+		
+		//value += "<label for='output'>Java Translation</label><div>";
+		//out.println("<label for='output'>Java Translation</label>");
+		//out.println("<div>");
 		for (int i = 0; i < translation.size(); i++) { Token token = (Token)translation.get(i);
 		if (token.getRowNumber() == count) {
-			out.println(token.getLexeme());
+			//out.println(token.getLexeme());
+			value += token.getLexeme();
 		}
 		else {
-			out.println("</div>");
-			out.println("<div>");
-			out.println(token.getLexeme());
+			value += token.getLexeme();
+			//out.println("</div>");
+			//out.println("<div>");
+			//out.println(token.getLexeme());
 			count++;
-		}
-	}%><%}%>
+		}%>
+		<script type="text/javascript">
+		editor2.getSession().insert({
+			row: <%=count%>,
+			column: 0
+		},  "<%=value%>" + "\n");
+		
+		</script>
+		
+	<%value = "";}%><%}%>
+	
+	
 	
 	<%ArrayList output = (ArrayList)request.getAttribute("output");
 	if(output != null) {
 		int count = 0;
 		out.println("<label for='output'>Java Output</label>");
-		out.println("<div>");
 		for (int i = 0; i < output.size(); i++) {
+			out.println("<div>");
 			out.println(output.get(i));
-			out.println("</div>");
-	}%><%}%>
+			out.println("</div>");}}%>
+			
 	</div>
 </body>
 </html>

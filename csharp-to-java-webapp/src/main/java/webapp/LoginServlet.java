@@ -50,6 +50,7 @@ public class LoginServlet extends HttpServlet {
 				e.printStackTrace();
 				output.clear();
 				output.add(e.getMessage());
+				request.setAttribute("output", output);
 			}
 		}
 		
