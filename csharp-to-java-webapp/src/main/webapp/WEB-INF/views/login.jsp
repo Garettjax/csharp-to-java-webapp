@@ -46,12 +46,12 @@
 	    //textarea.value = initial;
 	</script>
 	<div class="offset-1 col-10"  style='background-color:#F1F1F1;'>
-	<%ArrayList data = (ArrayList)request.getAttribute("name");
-	if(data != null) {
+	<%ArrayList translation = (ArrayList)request.getAttribute("name");
+	if(translation != null) {
 		int count = 1;
 		out.println("<label for='output'>Java Translation</label>");
 		out.println("<div>");
-		for (int i = 0; i < data.size(); i++) { Token token = (Token)data.get(i);
+		for (int i = 0; i < translation.size(); i++) { Token token = (Token)translation.get(i);
 		if (token.getRowNumber() == count) {
 			out.println(token.getLexeme());
 		}
@@ -61,6 +61,16 @@
 			out.println(token.getLexeme());
 			count++;
 		}
+	}%><%}%>
+	
+	<%ArrayList output = (ArrayList)request.getAttribute("output");
+	if(output != null) {
+		int count = 0;
+		out.println("<label for='output'>Java Output</label>");
+		out.println("<div>");
+		for (int i = 0; i < output.size(); i++) {
+			out.println(output.get(i));
+			out.println("</div>");
 	}%><%}%>
 	</div>
 </body>

@@ -45,8 +45,11 @@ public class LoginServlet extends HttpServlet {
 			
 			try {
 				output = Executer.Execute(tokens);
+				request.setAttribute("output", output);
 			} catch (Exception e) {
 				e.printStackTrace();
+				output.clear();
+				output.add(e.getMessage());
 			}
 		}
 		

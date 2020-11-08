@@ -1,5 +1,6 @@
 package webapp;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Executer {
@@ -10,6 +11,7 @@ public class Executer {
 		ArrayList<Token> namespaceTokens = checkNamespaceStructure(tokens);
 		ArrayList<Token> classTokens = null;
 		ArrayList<Token> mainMethodTokens = null;
+		output.clear();
 		
 		variables = new ArrayList<Variable>();
 		
@@ -42,6 +44,8 @@ public class Executer {
 					return new ArrayList<Token>(tokens.subList(3, tokens.size() - 2));
 				}
 				else {
+//					output.clear();
+//					output.add("exception" );
 					throwException("Exception: Syntax error, expected curly brace at line # " + token.getRowNumber());
 				}
 			}
@@ -158,19 +162,19 @@ public class Executer {
 				switch(tokens.get(0).getLexeme().toLowerCase()) {
 					case "int" :
 						variables.add(new Variable("INTEGER_LITERAL", "-1", tokens.get(1).getLexeme()));
-						return new ArrayList<Token>(tokens.subList(3, tokens.size() - 1));
+						return new ArrayList<Token>(tokens.subList(3, tokens.size()));
 	
 					case "string" :
 						variables.add(new Variable("STRING_LITERAL", "-1", tokens.get(1).getLexeme()));
-						return new ArrayList<Token>(tokens.subList(3, tokens.size() - 1));
+						return new ArrayList<Token>(tokens.subList(3, tokens.size()));
 	
 					case "bool" :
 					 variables.add(new Variable("BOOLEAN", "-1", tokens.get(1).getLexeme()));
-					 return new ArrayList<Token>(tokens.subList(3, tokens.size() - 1));
+					 return new ArrayList<Token>(tokens.subList(3, tokens.size()));
 	
 					 case "double" :
 						 variables.add(new Variable("BOOLEAN", "-1", tokens.get(1).getLexeme()));
-						 return new ArrayList<Token>(tokens.subList(3, tokens.size() - 1));
+						 return new ArrayList<Token>(tokens.subList(3, tokens.size()));
 	
 					default : 
 					   throwException("Exception: Declaration statement invalid syntax at line # " + token.getRowNumber());
@@ -193,7 +197,7 @@ public class Executer {
 					}
 					index++;
 				}
-				return new ArrayList<Token>(tokens.subList(4, tokens.size() - 1));
+				return new ArrayList<Token>(tokens.subList(4, tokens.size()));
 			}
 			//Declaration/assignment
 			else if(tokens.get(2).getLexeme().equals("=")&&(tokens.get(1).getTokenType().equals("IDENTIFIER"))) {//checks if it is the assignment statement = and the name
@@ -202,7 +206,7 @@ public class Executer {
 				   case "int" :
 				            if(tokens.get(3).getTokenType().equals("INTEGER_LITERAL")){
 				            	variables.add(new Variable("INTEGER_LITERAL", tokens.get(3).getLexeme(), tokens.get(1).getLexeme()));
-				            	return new ArrayList<Token>(tokens.subList(5, tokens.size() - 1));
+				            	return new ArrayList<Token>(tokens.subList(5, tokens.size()));
 				            }
 				            else {
 				            	throwException("Exception: Invalid string found at line # " + token.getRowNumber());
@@ -212,7 +216,7 @@ public class Executer {
 				   case "string" :
 				      if(tokens.get(3).getTokenType().equals("STRING_LITERAL")){
 				    	  variables.add(new Variable("STRING_LITERAL", tokens.get(3).getLexeme(), tokens.get(1).getLexeme()));
-				    	  return new ArrayList<Token>(tokens.subList(5, tokens.size() - 1));
+				    	  return new ArrayList<Token>(tokens.subList(5, tokens.size()));
 				      }
 				      break; 
 				      
@@ -220,7 +224,7 @@ public class Executer {
 			       case "bool" :
 			    	  if(tokens.get(3).getLexeme().toLowerCase().equals("true") || tokens.get(3).getLexeme().toLowerCase().equals("false")){
 			            	variables.add(new Variable("BOOLEAN", tokens.get(3).getLexeme(), tokens.get(1).getLexeme()));
-			            	return new ArrayList<Token>(tokens.subList(5, tokens.size() - 1));
+			            	return new ArrayList<Token>(tokens.subList(5, tokens.size()));
 			            }
 			            else {
 			            	throwException("Exception: Invalid boolean found at line # " + token.getRowNumber());
@@ -230,7 +234,7 @@ public class Executer {
 			         case "double" :
 			        	 if(tokens.get(3).getTokenType().equals("REAL_CONSTANT")){
 				            	variables.add(new Variable("DOUBLE", tokens.get(3).getLexeme(), tokens.get(1).getLexeme()));
-				            	return new ArrayList<Token>(tokens.subList(5, tokens.size() - 1));
+				            	return new ArrayList<Token>(tokens.subList(5, tokens.size()));
 				            }
 				            else {
 				            	throwException("Exception: Invalid double found at line # " + token.getRowNumber());
@@ -241,7 +245,7 @@ public class Executer {
 					   throwException("Exception: Assignment statement invalid syntax at line # " + token.getRowNumber());
 					}
 				}
-		else if (token.getLexeme().equals("while")||token.getLexeme().equals("for")||(token.getLexeme().equals("System.out.println")) ) {
+		else if (token.getLexeme().equals("while")||token.getLexeme().equals("for")||(token.getLexeme().equals("System.out.println"))||(token.getLexeme().equals("if"))) {
 			switch(token.getLexeme().toLowerCase()) {
 			   case "while":
 				   		//Need more conditional checks here for var1 || var2 && var3
@@ -255,21 +259,34 @@ public class Executer {
 				   				break;
 				   			}
 				   		}
+
 					   if (checkConditionalStatement(new ArrayList<Token>(tokens.subList(start + 1, stop)))) {
 						   ArrayList<Token> condition = new ArrayList<Token>(tokens.subList(start + 1, stop));
 		            		if (tokens.get(stop + 1).getTokenType().equals("LEFT_CURLY")) {
-		            			start = stop + 2;
-		            			for (int i = start; i < tokens.size() - 1; i++) {
+		            			start = stop;
+		            			for (int i = start; i < tokens.size(); i++) {
 						   			if(tokens.get(i).getTokenType().equals("RIGHT_CURLY")) {
 						   				stop = i;
 						   				break;
 						   			}
 						   		}
-		            			ArrayList<Token> tempWhileTokens = new ArrayList<Token>(tokens.subList(start, stop));
-		            			executeWhileLoop(tempWhileTokens, condition);
-
+		            			ArrayList<Token> tempWhileTokens = new ArrayList<Token>(tokens.subList(start + 2, stop));
+		            			ArrayList<Token> remainingTokens = new ArrayList<Token>(tokens.subList(stop + 1, tokens.size()));
+		            			int size = tempWhileTokens.size();
 		            			
-		            			tempWhileTokens = new ArrayList<Token>(tempWhileTokens.subList(6, tempWhileTokens.size() - 1));
+		            			executeWhileLoop(tempWhileTokens, condition);
+		            			
+		            			return remainingTokens;
+		            			
+//		            			if (tempWhileTokens.size() == size) {
+//		            				tempWhileTokens.clear();
+//		        					return tempWhileTokens;
+//		        				}
+//		        				else {
+//		        					return new ArrayList<Token>(tempWhileTokens.subList(5, tempWhileTokens.size()));
+//		        				}
+		            			
+		            			//tempWhileTokens = new ArrayList<Token>(tempWhileTokens.subList(6, tempWhileTokens.size() - 1));
 		            			//Begin Execution of while loop here
 		            			
 		            		}
@@ -297,6 +314,52 @@ public class Executer {
 		            else {
 		            	throwException("Exception: Invalid Console.writeline found at line # " + token.getRowNumber());
 		            }
+		      case "if" :
+		    		//Need more conditional checks here for var1 || var2 && var3
+		    		start = 0;
+		    		stop = 0;
+		    		for (int i = 1; i < tokens.size() - 1; i++) {
+		    			if(tokens.get(i).getTokenType().equals("LEFT_PAREN")) {
+		    				start = i;
+		    			}
+		    			else if(tokens.get(i).getTokenType().equals("RIGHT_PAREN")) {
+		    				stop = i;
+		    				break;
+		    			}
+		    		}
+		    	   if (checkConditionalStatement(new ArrayList<Token>(tokens.subList(start + 1, stop)))) {
+		    		   ArrayList<Token> IFcondition = new ArrayList<Token>(tokens.subList(start + 1, stop));
+		    		   if (tokens.get(stop + 1).getTokenType().equals("LEFT_CURLY")) {
+		    				start = stop + 1;
+		    				for (int i = start; i <= tokens.size() - 1; i++) {
+		    					if(tokens.get(i).getTokenType().equals("RIGHT_CURLY")) {
+		    						stop = i;
+		    						break;
+		    					}
+		    				}
+		    				ArrayList<Token> tempIfTokens = new ArrayList<Token>(tokens.subList(start + 1, stop));
+		    				executeIfLoop(tempIfTokens, IFcondition);
+		    				
+		    				if (tempIfTokens.size() == 5) {
+		    					tempIfTokens.clear();
+	        					return tempIfTokens;
+	        				}
+	        				else {
+	        					return new ArrayList<Token>(tempIfTokens.subList(5, tempIfTokens.size()));
+	        				}
+		    				
+		    				//tempIfTokens = new ArrayList<Token>(tempIfTokens.subList(6, tempIfTokens.size() - 1));
+		    				//Begin Execution of while loop here
+		    				
+		    				
+		    			}
+		    			else {
+		    				throwException("Exception: Invalid if statement syntax found at line # " + token.getRowNumber());
+		    			}
+		    		}
+		    	   else {
+		    		   throwException("Exception: Invalid conditional statement syntax found at line # " + token.getRowNumber());
+		    	   }
 		     
 			   default : 
 				   throwException("Exception: Assignment statement invalid syntax at line # " + token.getRowNumber());
@@ -323,15 +386,50 @@ public class Executer {
 				}
 				break;
 			case "<=":
+//				int temp1 = Integer.parseInt(getVarValue(condition.get(0).getLexeme()));
+//				int temp2 = Integer.parseInt(getVarValue(condition.get(2).getLexeme()));
+				
 				while(Integer.parseInt(getVarValue(condition.get(0).getLexeme())) <= Integer.parseInt(getVarValue(condition.get(2).getLexeme()))) {
         			if (whileTokens.get(0).getLexeme().equals("System.out.println")) {
         				printConsole(whileTokens);
-        				whileTokens = new ArrayList<Token>(whileTokens.subList(6, whileTokens.size() - 1));
+        				//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
 	    			}
 	    			
-        			else if (doesVarExist(whileTokens.get(0).getLexeme())) {
-	    				if(doesVarHaveValue(whileTokens.get(0).getLexeme())) {
-	    					//TODO: check type
+        			if (doesVarExist(whileTokens.get(5).getLexeme())) {
+	    				if(doesVarHaveValue(whileTokens.get(5).getLexeme())) {
+	    					if(whileTokens.get(6).getTokenType().equals("INC_OP")) {
+	    						Variable variable = getVar(whileTokens.get(5).getLexeme());
+	    						variable.value = Integer.toString(incrementVar(Integer.parseInt(variable.value)));
+	    						boolean varExists = false;
+	    						int index = 0;
+	    						
+	    						Iterator<Variable> iterator = variables.iterator();
+	    						Variable temp = new Variable();
+	    						
+	    						while(iterator.hasNext()) {
+	    							Variable var = iterator.next();
+	    							if (var.name.equals(variable.name)) {
+	    								varExists = true;
+	    								iterator.remove();
+	    								temp.name = variable.name;
+	    								temp.type = variable.type;
+	    								temp.value = variable.value;
+//	    								var.value = variable.value;
+//	    								variables.add(var);
+	    							}
+	    						}
+	    						
+	    						variables.add(temp);
+//	    						for (Variable var : variables) {
+//	    							if (var.name.equals(variable.name)) {
+//	    								varExists = true;
+//	    								variables.remove(index);
+//	    								var.value = variable.value;
+//	    								variables.add(var);
+//	    							}
+//	    							index++;
+//	    						}
+	    					}
 	    				}
 	    				else {
 	    					throwException("Exception: Variable (" + whileTokens.get(0).getLexeme() + "does not have a value, at line # " + condition.get(0).getRowNumber());
@@ -352,7 +450,17 @@ public class Executer {
 					
 				}
 				break;
+			
 		}
+		//return whileTokens;
+	}
+	
+	public static int incrementVar(int value) {
+		return (value + 1);
+	}
+	
+	public static int decrementVar(int value) {
+		return value--;
 	}
 	
 	public static void printConsole(ArrayList<Token> printTokens) throws Exception{
@@ -413,6 +521,138 @@ public class Executer {
 		}
 		
 		return false;
+	}
+	
+	public static void executeIfLoop(ArrayList<Token> ifTokens, ArrayList<Token> IFcondition) throws Exception{
+		//TODO: support !=
+		int left = 0;
+		int right = 0;
+		
+		if (doesVarExist(IFcondition.get(0).getLexeme())) {
+			if(doesVarHaveValue(IFcondition.get(0).getLexeme())) {
+				left = Integer.parseInt(getVarValue(IFcondition.get(0).getLexeme()));
+			}
+		}
+		else {
+			left = Integer.parseInt(IFcondition.get(0).getLexeme());
+		}
+		
+		if (doesVarExist(IFcondition.get(2).getLexeme())) {
+			if(doesVarHaveValue(IFcondition.get(2).getLexeme())) {
+					right = Integer.parseInt(getVarValue(IFcondition.get(2).getLexeme()));	
+				}
+		}
+		else {
+			right = Integer.parseInt(IFcondition.get(2).getLexeme());
+		}
+			
+		switch (IFcondition.get(1).getLexeme()) {
+			case "<":
+				if(left < right) {
+					if (ifTokens.get(0).getLexeme().equals("System.out.println")) {
+						printConsole(ifTokens);
+						ifTokens = new ArrayList<Token>(ifTokens.subList(0, ifTokens.size()));
+					}
+					
+				/*	if (doesVarExist(ifTokens.get(0).getLexeme())) {
+						if(doesVarHaveValue(ifTokens.get(0).getLexeme())) {
+							//TODO: check type
+						}
+						else {
+							throwException("Exception: Variable (" + ifTokens.get(0).getLexeme() + "does not have a value, at line # " + IFcondition.get(0).getRowNumber());
+						}
+				}*/
+				}
+				break;
+			case ">":
+				if(left > right) {
+					
+						if (ifTokens.get(0).getLexeme().equals("System.out.println")) {
+							printConsole(ifTokens);
+							ifTokens = new ArrayList<Token>(ifTokens.subList(6, ifTokens.size() - 1));
+						}
+						
+					/*	if (doesVarExist(ifTokens.get(0).getLexeme())) {
+							if(doesVarHaveValue(ifTokens.get(0).getLexeme())) {
+								//TODO: check type
+							}
+							else {
+								throwException("Exception: Variable (" + ifTokens.get(0).getLexeme() + "does not have a value, at line # " + IFcondition.get(0).getRowNumber());
+							}
+					}*/
+					
+				}
+				break;
+			case "<=":
+				if(left <= right) {
+					if (ifTokens.get(0).getLexeme().equals("System.out.println")) {
+						printConsole(ifTokens);
+						ifTokens = new ArrayList<Token>(ifTokens.subList(6, ifTokens.size() - 1));
+					}
+					
+				/*	if (doesVarExist(ifTokens.get(0).getLexeme())) {
+						if(doesVarHaveValue(ifTokens.get(0).getLexeme())) {
+							//TODO: check type
+						}
+						else {
+							throwException("Exception: Variable (" + ifTokens.get(0).getLexeme() + "does not have a value, at line # " + IFcondition.get(0).getRowNumber());
+						}
+					}*/
+					else {
+						throwException("Exception: Variable (" + ifTokens.get(0).getLexeme() + "has not been declared, at line # " + IFcondition.get(0).getRowNumber());
+					}
+				}
+				break;
+			case ">=":
+				if(left >= right) {
+					
+						if (ifTokens.get(0).getLexeme().equals("System.out.println")) {
+							printConsole(ifTokens);
+							ifTokens = new ArrayList<Token>(ifTokens.subList(6, ifTokens.size() - 1));
+						}
+						
+					/*	if (doesVarExist(ifTokens.get(0).getLexeme())) {
+							if(doesVarHaveValue(ifTokens.get(0).getLexeme())) {
+								//TODO: check type
+							}
+							else {
+								throwException("Exception: Variable (" + ifTokens.get(0).getLexeme() + "does not have a value, at line # " + IFcondition.get(0).getRowNumber());
+							}
+					}*/
+					
+				}
+				break;
+			case "==":
+				// To do: Figure out why '==' always run true
+				if(left == right) {
+					
+						if (ifTokens.get(0).getLexeme().equals("System.out.println")) {
+							printConsole(ifTokens);
+							ifTokens = new ArrayList<Token>(ifTokens.subList(6, ifTokens.size() - 1));
+						}
+						
+				/*		if (doesVarExist(ifTokens.get(0).getLexeme())) {
+							if(doesVarHaveValue(ifTokens.get(0).getLexeme())) {
+								//TODO: check type
+							}
+							else {
+								throwException("Exception: Variable (" + ifTokens.get(0).getLexeme() + "does not have a value, at line # " + IFcondition.get(0).getRowNumber());
+							}
+					}*/
+					
+				}
+				break;
+		}
+	}
+	public static Variable getVar(String name) {
+		Variable variable = new Variable();
+		
+		for (Variable var : variables) {
+			if (var.name.equals(name)) {
+				variable = new Variable(var.type, var.value, var.name);
+			}
+		}
+		return variable;
 	}
 	
 	public static boolean doesVarExist(String name) {
