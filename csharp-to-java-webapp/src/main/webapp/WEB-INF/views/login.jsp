@@ -38,7 +38,7 @@
 </style>
 <script type="text/javascript">
 	//var initial = 'namespace Loops\n\t{\n\t\tinternal class Program\n{\npublic static void Main(string[] args)\n{\nint test1 = 1;\nwhile (test1 <= 4)\n{\nConsole.WriteLine("Test 1 Passed (prints 4 times)");\ntest1++;\n}\n\n\n\nint test3 = 21;\ndo\n{\nConsole.WriteLine("If this line prints once, Test 3 Passed");\ntest3++;\n} while (test3 >= 20);\nConsole.WriteLine("Test 4 Passed if prints once");\n}\n}\n}';
-	var initial = 'namespace Loops\n{\n\tinternal class Program\n\t{\n\t\tpublic static void Main(string[] args)\n\t\t{\n\t\tint test1;\n\t\ttest1 = 2;\n\t\tstring test4 = "something here";\n\t\twhile (test1 <= 4)\n\t\t{\n\t\t\tConsole.WriteLine("Test 1 Passed (prints 4 times)");\n\t\t\ttest1++;\n\t\t}\n\t\tif (test1 <= 10){\n\t\tConsole.WriteLine("Test something Passed (prints 4 times)");\n\t\t}\n\t}\n\t}\n}';
+	var initial = 'namespace Loops\n{\n\tinternal class Program\n\t{\n\t\tpublic static void Main(string[] args)\n\t\t{\n\t\tint test1;\n\t\ttest1 = 2;\n\t\tstring test4 = "something here";\n\t\twhile (test1 <= 6)\n\t\t{\n\t\t\tConsole.WriteLine(test1);\n\t\t\ttest1++;\n\t\t}\n\t\tif (test1 <= 10){\n\t\tConsole.WriteLine("If statement passed");\n\t\t}\n\t}\n\t}\n}';
 </script>
 </head>
 <body>
@@ -81,31 +81,36 @@
 	<%ArrayList translation = (ArrayList)request.getAttribute("name");
 	if(translation != null) {
 		int count = 1;
+		int column = 0;
 		
 		//value += "<label for='output'>Java Translation</label><div>";
 		//out.println("<label for='output'>Java Translation</label>");
 		//out.println("<div>");
-		for (int i = 0; i < translation.size(); i++) { Token token = (Token)translation.get(i);
-		if (token.getRowNumber() == count) {
-			//out.println(token.getLexeme());
-			value += token.getLexeme();
-		}
-		else {
-			value += token.getLexeme();
-			//out.println("</div>");
-			//out.println("<div>");
-			//out.println(token.getLexeme());
-			count++;
-		}%>
-		<script type="text/javascript">
-		editor2.getSession().insert({
-			row: <%=count%>,
-			column: 0
-		},  "<%=value%>" + "\n");
+		for (int i = 0; i < translation.size(); i++) { 
+			
+			Token token = (Token)translation.get(i);
+			if (token.getRowNumber() == count) {
+				//out.println(token.getLexeme());
+				value += token.getLexeme() + " ";
+				column++;
+			}
+			else {
+				value += token.getLexeme() + " ";
+				//out.println("</div>");
+				//out.println("<div>");
+				//out.println(token.getLexeme());
+				count++;
+				column++;
+			}%>
+			<script type="text/javascript">
+			editor2.getSession().insert({
+				row: <%=count%>
+			},  "<%=value%>" + "\n");
 		
 		</script>
 		
-	<%value = "";}%><%}%>
+	<%value = "";
+	column = 0;}%><%}%>
 	
 	
 	

@@ -301,7 +301,7 @@ public class Executer {
 		     
 		      case "System.out.println" :
 		            if(tokens.get(1).getTokenType().equals("OPEN_BRACKET")&&(tokens.get(2).getTokenType().equals("\""))&&(tokens.get(3).getTokenType().equals("STRING_LITERAL"))&&(tokens.get(4).getTokenType().equals("OPEN_BRACKET")&&(tokens.get(4).getTokenType().equals("OPEN_BRACKET")))){
-		            
+		            	//printConsole(tokens.get(0));
 		            }
 		            else {
 		            	throwException("Exception: Invalid Console.writeline found at line # " + token.getRowNumber());
@@ -408,8 +408,8 @@ public class Executer {
 				}
 				break;
 			case "<=":
-//				int temp1 = Integer.parseInt(getVarValue(condition.get(0).getLexeme()));
-//				int temp2 = Integer.parseInt(getVarValue(condition.get(2).getLexeme()));
+				int temp1 = Integer.parseInt(getVarValue(condition.get(0).getLexeme()));
+				int temp2 = Integer.parseInt(getVarValue(condition.get(2).getLexeme()));
 				
 				while(Integer.parseInt(getVarValue(condition.get(0).getLexeme())) <= Integer.parseInt(getVarValue(condition.get(2).getLexeme()))) {
         			if (whileTokens.get(0).getLexeme().equals("System.out.println")) {
@@ -489,7 +489,24 @@ public class Executer {
 		if (printTokens.get(0).getLexeme().equals("System.out.println")) {
 			if (printTokens.get(1).getTokenType().equals("LEFT_PAREN") && printTokens.get(3).getTokenType().equals("RIGHT_PAREN")) {
 				if (printTokens.get(4).getTokenType().equals("SEMICOLON")) {
-					output.add(printTokens.get(2).getLexeme());
+					if (!printTokens.get(2).getTokenType().equals("STRING_LITERAL")) {
+						if(doesVarExist(printTokens.get(2).getLexeme())) {
+							if(doesVarHaveValue(printTokens.get(2).getLexeme())) {
+								Variable var = getVar(printTokens.get(2).getLexeme());
+								output.add(var.value);
+							}
+							else {
+								throwException("Exception: variable: " + printTokens.get(2).getLexeme() + " is undefined at line # " + printTokens.get(2).getRowNumber());
+							}
+						}
+						else {
+							throwException("Exception: variable: " + printTokens.get(2).getLexeme() + " has not been declared at line # " + printTokens.get(2).getRowNumber());
+						}
+					}
+					else {
+						output.add(printTokens.get(2).getLexeme());
+					}
+					//output.add(printTokens.get(2).getLexeme());
 				}
 				else {
 					throwException("Exception: Missing semicolon at line # " + printTokens.get(4).getRowNumber());

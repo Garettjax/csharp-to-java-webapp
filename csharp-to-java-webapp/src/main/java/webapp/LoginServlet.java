@@ -24,7 +24,8 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		
 		String code = request.getParameter("name");
-		String initialCode = "Test 1234";
+		//String code = "Test 1234";
+		//String initialCode = "Test 1234";
 		ArrayList<String> output = new ArrayList<String>();
 		if(code != "") {
 			CustomParser customParser = new CustomParser(code);
