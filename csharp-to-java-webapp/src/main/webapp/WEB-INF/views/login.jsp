@@ -115,7 +115,7 @@
 	<%code = (String)request.getAttribute("code");%>
 	
 	<script type="text/javascript">
-	debugger;
+	//debugger;
 	var userCode = "<%=code%>";
 	
 	if (userCode != "null") {
