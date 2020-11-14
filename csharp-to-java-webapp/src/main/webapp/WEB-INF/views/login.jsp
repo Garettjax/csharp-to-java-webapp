@@ -77,7 +77,7 @@
 	    });
 	</script>
 	<div class="offset-1 col-10"  style='background-color:#F1F1F1;'>
-	<%! public String value = "";%>
+	<%! public String value = "", code = "";%>
 	<%ArrayList translation = (ArrayList)request.getAttribute("name");
 	if(translation != null) {
 		int count = 1;
@@ -111,6 +111,22 @@
 		
 	<%value = "";
 	column = 0;}%><%}%>
+	
+	<%code = (String)request.getAttribute("code");%>
+	
+	<script type="text/javascript">
+	debugger;
+	var userCode = "<%=code%>";
+	
+	if (userCode != "null") {
+		userCode = userCode.replace(/{{n}}/g, "\r\n");
+		userCode = userCode.replace(/{{quote}}/g, "\"");
+		editor1.session.setValue(userCode);
+	} else {
+		editor1.session.setValue(initial);
+	}
+	
+	</script>
 	
 	
 	

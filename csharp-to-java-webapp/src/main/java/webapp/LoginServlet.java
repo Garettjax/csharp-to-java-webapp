@@ -27,6 +27,7 @@ public class LoginServlet extends HttpServlet {
 		//String code = "Test 1234";
 		//String initialCode = "Test 1234";
 		ArrayList<String> output = new ArrayList<String>();
+		
 		if(code != "") {
 			CustomParser customParser = new CustomParser(code);
 			tokens = customParser.getAllTokens(customParser);
@@ -53,6 +54,10 @@ public class LoginServlet extends HttpServlet {
 				output.add(e.getMessage());
 				request.setAttribute("output", output);
 			}
+			
+			code = code.replace("\r\n", "{{n}}");
+			code = code.replace("\"", "{{quote}}");
+			request.setAttribute("code", code);
 		}
 		
 		
