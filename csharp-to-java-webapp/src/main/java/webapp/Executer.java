@@ -23,6 +23,10 @@ public class Executer {
 			
 			while(!mainMethodTokens.isEmpty()) {
 				mainMethodTokens = mainExecution(mainMethodTokens);
+				if(mainMethodTokens == null) {
+					throwException("Exception: Error occurred");
+					break;
+				}
 			}
 			
 		}
@@ -356,43 +360,291 @@ public class Executer {
 		    		   throwException("Exception: Invalid conditional statement syntax found at line # " + token.getRowNumber());
 		    	   }
 		      case "for" :
-		    		if(tokens.get(1).getTokenType().equals("OPEN_BRACKET")&&((tokens.get(13).getTokenType().equals("CLOSE_BRACKET")))){
+		    	  start = 0;
+		    		stop = 0;
+		    		for (int i = 1; i < tokens.size() - 1; i++) {
+		    			if(tokens.get(i).getTokenType().equals("LEFT_PAREN")) {
+		    				start = i;
+		    			}
+		    			else if(tokens.get(i).getTokenType().equals("RIGHT_PAREN")) {
+		    				stop = i;
+		    				break;
+		    			}
+		    		}
+		    		if(tokens.get(1).getTokenType().equals("LEFT_PAREN")&&((tokens.get(13).getTokenType().equals("RIGHT_PAREN")))){
 		    				//first part for for loop
-	    				if(tokens.get(2).getLexeme().toLowerCase().equals("int")&&((tokens.get(3).getTokenType().equals("IDENTIFIER")))&&(tokens.get(4).getLexeme().equals("="))&&((tokens.get(5).getTokenType().equals("INTEGER_LITERAL")))) {
+	    				if(tokens.get(2).getLexeme().toLowerCase().equals("int")&&((tokens.get(3).getTokenType().equals("IDENTIFIER")))&&(tokens.get(4).getLexeme().equals("="))&&((tokens.get(5).getTokenType().equals("INTEGER_LITERAL"))&&((tokens.get(6).getTokenType().equals("SEMICOLON"))))) {
 	    				
 	    					//second part conditional 
-	    					//possibly break into subarray
+	    					if(((tokens.get(7).getTokenType().equals("IDENTIFIER")))&&(tokens.get(9).getTokenType().equals("INTEGER_LITERAL"))&&((tokens.get(10).getTokenType().equals("SEMICOLON")))) { //ADD OPERATOR
+	    						//check third condition
+	    					
+						 
+	    					//	if(tokens.get(8).getLexeme() == "<" || tokens.get(8).getLexeme() == ">" || tokens.get(8).getLexeme() == "<=" || tokens.get(8).getLexeme() == ">=") {
+	    						if(tokens.get(8).getLexeme().equals("<")|| tokens.get(8).getLexeme().equals(">") ||  tokens.get(8).getLexeme().equals("<=") ||tokens.get(8).getLexeme().equals(">=")) {
 	    					
 	    					//third part conditional
 	    					if(((tokens.get(11).getTokenType().equals("IDENTIFIER")))){
 	    						switch((tokens.get(12)).getTokenType()) {
 	    						case "INC_OP":
-	    							
+	    							ArrayList<Token> Forcondition = new ArrayList<Token>(tokens.subList(start + 1, stop));
+	    				    		   if (tokens.get(stop + 1).getTokenType().equals("LEFT_CURLY")) {
+	    				    				start = stop + 1;
+	    				    				for (int i = start; i <= tokens.size() - 1; i++) {
+	    				    					if(tokens.get(i).getTokenType().equals("RIGHT_CURLY")) {
+	    				    						stop = i;
+	    				    						break;
+	    				    					}
+	    				    				}
+	    				    				ArrayList<Token> tempForTokens = new ArrayList<Token>(tokens.subList(start + 1, stop));
+	    				    				ArrayList<Token> remainingTokens = new ArrayList<Token>(tokens.subList(stop + 1, tokens.size()));
+	    				    				
+	    				    				executeForLoopINC(tempForTokens, Forcondition);
+	    				    				
+	    				    				return remainingTokens;
+	    						
+	    				    		   
+	    				    		   }
+	    				
+		    		
+			
+		
 	    							break;
+	    							
 	    						case "DEC_OP":
+	    							ArrayList<Token> Forcondition2 = new ArrayList<Token>(tokens.subList(start + 1, stop));
+	    				    		   if (tokens.get(stop + 1).getTokenType().equals("LEFT_CURLY")) {
+	    				    				start = stop + 1;
+	    				    				for (int i = start; i <= tokens.size() - 1; i++) {
+	    				    					if(tokens.get(i).getTokenType().equals("RIGHT_CURLY")) {
+	    				    						stop = i;
+	    				    						break;
+	    				    					}
+	    				    				}
+	    				    				ArrayList<Token> tempForTokens = new ArrayList<Token>(tokens.subList(start + 1, stop));
+	    				    				ArrayList<Token> remainingTokens = new ArrayList<Token>(tokens.subList(stop + 1, tokens.size()));
+	    				    				
+	    				    				executeForLoopDEC(tempForTokens, Forcondition2);
+	    				    				
+	    				    				return remainingTokens;
+	    						
+	    				    		   
+	    				    		   }
 	    							break;
 	    							
-	    						default:
+	    						default: throwException("Exception: Invalid incremental/decremental value at line # " + token.getRowNumber());
 		    				
     							}
-    						}
-    					}
-    				}
-		    		
+	    					}
+	    						}
+	    					
+    						
 		    		else {
 		    			throwException("Exception: Invalid for found at line # " + token.getRowNumber());
 		    		}
 		     
-			   default : 
-				   throwException("Exception: Assignment statement invalid syntax at line # " + token.getRowNumber());
-				}
+			//   default : 
+			//	   throwException("Exception: Assignment statement invalid syntax at line # " + token.getRowNumber());
+			//	}
+		}else {
+			throwException("Exception: Invalid for syntax at line # " + token.getRowNumber());
 		}
+	    				}else {
+			    			throwException("Exception: Invalid for syntax at line # " + token.getRowNumber());
+			    		}
+		    		}
+			}
+			}
 		else {
 			throwException("An unexpected error occured");
 		}
 		
 		return null;
 	}
+	
+	
+	public static void executeForLoopDEC(ArrayList<Token> forTokens, ArrayList<Token> Forcondition) throws Exception{
+	//TODO: support !=
+	switch (Forcondition.get(6).getLexeme()) {
+		case ">":
+			int start = 0;
+			int end = 0;
+			
+			if (doesVarExist(Forcondition.get(1).getLexeme())) {
+				if(doesVarHaveValue(Forcondition.get(0).getLexeme())) {
+					start = Integer.parseInt(getVarValue(Forcondition.get(1).getLexeme()));
+				}
+			}
+			else {
+				start = Integer.parseInt(Forcondition.get(3).getLexeme());
+			}
+			
+			if (doesVarExist(Forcondition.get(7).getLexeme())) {
+				if(doesVarHaveValue(Forcondition.get(7).getLexeme())) {
+						end = Integer.parseInt(getVarValue(Forcondition.get(7).getLexeme()));	
+					}
+			}
+			else {
+				end = Integer.parseInt(Forcondition.get(7).getLexeme());
+			}
+			int temp1 = Integer.parseInt(getVarValue(Forcondition.get(0).getLexeme()));
+			int temp2 = Integer.parseInt(getVarValue(Forcondition.get(2).getLexeme()));
+			
+			while(start > end) {
+    			if (forTokens.get(0).getLexeme().equals("System.out.println")) {
+    				printConsole(forTokens);
+    				start-=1;
+    				//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
+    			}
+    			
+
+    			else {
+    				throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
+    			}
+			}
+			
+			break;
+/*					 
+*/					case ">=":
+			 start = 0;
+			 end = 0;
+			
+			if (doesVarExist(Forcondition.get(1).getLexeme())) {
+				if(doesVarHaveValue(Forcondition.get(0).getLexeme())) {
+					start = Integer.parseInt(getVarValue(Forcondition.get(1).getLexeme()));
+				}
+			}
+			else {
+				start = Integer.parseInt(Forcondition.get(3).getLexeme());
+			}
+			
+			if (doesVarExist(Forcondition.get(7).getLexeme())) {
+				if(doesVarHaveValue(Forcondition.get(7).getLexeme())) {
+						end = Integer.parseInt(getVarValue(Forcondition.get(7).getLexeme()));	
+					}
+			}
+			else {
+				end = Integer.parseInt(Forcondition.get(7).getLexeme());
+			}
+			 temp1 = Integer.parseInt(getVarValue(Forcondition.get(0).getLexeme()));
+			 temp2 = Integer.parseInt(getVarValue(Forcondition.get(2).getLexeme()));
+			
+			while(start >= end) {
+    			if (forTokens.get(0).getLexeme().equals("System.out.println")) {
+    				printConsole(forTokens);
+    				start-=1;
+    				//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
+    			}
+    			
+
+    			else {
+    				throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
+    			}
+			}
+			break;
+/*					
+			break;
+		case "==":
+			while(Integer.parseInt(Forcondition.get(0).getLexeme()) == Integer.parseInt(Forcondition.get(2).getLexeme())) {
+				
+			}
+			break;
+*/				
+	}
+	//return whileTokens;
+}
+	
+			
+			public static void executeForLoopINC(ArrayList<Token> forTokens, ArrayList<Token> Forcondition) throws Exception{
+				//TODO: support !=
+				switch (Forcondition.get(6).getLexeme()) {
+					case "<":
+						int start = 0;
+						int end = 0;
+						
+						if (doesVarExist(Forcondition.get(1).getLexeme())) {
+							if(doesVarHaveValue(Forcondition.get(0).getLexeme())) {
+								start = Integer.parseInt(getVarValue(Forcondition.get(1).getLexeme()));
+							}
+						}
+						else {
+							start = Integer.parseInt(Forcondition.get(3).getLexeme());
+						}
+						
+						if (doesVarExist(Forcondition.get(7).getLexeme())) {
+							if(doesVarHaveValue(Forcondition.get(7).getLexeme())) {
+									end = Integer.parseInt(getVarValue(Forcondition.get(7).getLexeme()));	
+								}
+						}
+						else {
+							end = Integer.parseInt(Forcondition.get(7).getLexeme());
+						}
+						int temp1 = Integer.parseInt(getVarValue(Forcondition.get(0).getLexeme()));
+						int temp2 = Integer.parseInt(getVarValue(Forcondition.get(2).getLexeme()));
+						
+						while(start < end) {
+		        			if (forTokens.get(0).getLexeme().equals("System.out.println")) {
+		        				printConsole(forTokens);
+		        				start+=1;
+		        				//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
+			    			}
+			    			
+ 
+			    			else {
+			    				throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
+			    			}
+						}
+						
+						break;
+/*					 
+*/					case "<=":
+						 start = 0;
+						 end = 0;
+						
+						if (doesVarExist(Forcondition.get(1).getLexeme())) {
+							if(doesVarHaveValue(Forcondition.get(0).getLexeme())) {
+								start = Integer.parseInt(getVarValue(Forcondition.get(1).getLexeme()));
+							}
+						}
+						else {
+							start = Integer.parseInt(Forcondition.get(3).getLexeme());
+						}
+						
+						if (doesVarExist(Forcondition.get(7).getLexeme())) {
+							if(doesVarHaveValue(Forcondition.get(7).getLexeme())) {
+									end = Integer.parseInt(getVarValue(Forcondition.get(7).getLexeme()));	
+								}
+						}
+						else {
+							end = Integer.parseInt(Forcondition.get(7).getLexeme());
+						}
+						 temp1 = Integer.parseInt(getVarValue(Forcondition.get(0).getLexeme()));
+						 temp2 = Integer.parseInt(getVarValue(Forcondition.get(2).getLexeme()));
+						
+						while(start <= end) {
+		        			if (forTokens.get(0).getLexeme().equals("System.out.println")) {
+		        				printConsole(forTokens);
+		        				start+=1;
+		        				//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
+			    			}
+			    			
+ 
+			    			else {
+			    				throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
+			    			}
+						}
+						break;
+/*					
+						break;
+					case "==":
+						while(Integer.parseInt(Forcondition.get(0).getLexeme()) == Integer.parseInt(Forcondition.get(2).getLexeme())) {
+							
+						}
+						break;
+	*/				
+				}
+				//return whileTokens;
+			}
 	
 	public static void executeWhileLoop(ArrayList<Token> whileTokens, ArrayList<Token> condition) throws Exception{
 		//TODO: support !=
@@ -424,6 +676,7 @@ public class Executer {
 	    						variable.value = Integer.toString(incrementVar(Integer.parseInt(variable.value)));
 	    						boolean varExists = false;
 	    						int index = 0;
+	    						
 	    						
 	    						Iterator<Variable> iterator = variables.iterator();
 	    						Variable temp = new Variable();
@@ -482,7 +735,7 @@ public class Executer {
 	}
 	
 	public static int decrementVar(int value) {
-		return value--;
+		return (value - 1);
 	}
 	
 	public static void printConsole(ArrayList<Token> printTokens) throws Exception{
