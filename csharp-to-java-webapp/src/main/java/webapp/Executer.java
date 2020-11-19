@@ -374,7 +374,11 @@ public class Executer {
 		    		if(tokens.get(1).getTokenType().equals("LEFT_PAREN")&&((tokens.get(13).getTokenType().equals("RIGHT_PAREN")))){
 		    				//first part for for loop
 	    				if(tokens.get(2).getLexeme().toLowerCase().equals("int")&&((tokens.get(3).getTokenType().equals("IDENTIFIER")))&&(tokens.get(4).getLexeme().equals("="))&&((tokens.get(5).getTokenType().equals("INTEGER_LITERAL"))&&((tokens.get(6).getTokenType().equals("SEMICOLON"))))) {
-	    				
+	    				Variable newVar = new Variable();
+	    				newVar.name =tokens.get(3).getLexeme();
+	    				newVar.type =tokens.get(2).getLexeme();
+	    				newVar.value = tokens.get(5).getLexeme();
+	    					variables.add(newVar);
 	    					//second part conditional 
 	    					if(((tokens.get(7).getTokenType().equals("IDENTIFIER")))&&(tokens.get(9).getTokenType().equals("INTEGER_LITERAL"))&&((tokens.get(10).getTokenType().equals("SEMICOLON")))) { //ADD OPERATOR
 	    						//check third condition
@@ -474,6 +478,7 @@ public class Executer {
 				if(doesVarHaveValue(Forcondition.get(0).getLexeme())) {
 					start = Integer.parseInt(getVarValue(Forcondition.get(1).getLexeme()));
 				}
+				start = Integer.parseInt(Forcondition.get(3).getLexeme());
 			}
 			else {
 				start = Integer.parseInt(Forcondition.get(3).getLexeme());
@@ -487,25 +492,64 @@ public class Executer {
 			else {
 				end = Integer.parseInt(Forcondition.get(7).getLexeme());
 			}
-			int temp1 = Integer.parseInt(getVarValue(Forcondition.get(0).getLexeme()));
-			int temp2 = Integer.parseInt(getVarValue(Forcondition.get(2).getLexeme()));
+			// temp1 = Integer.parseInt(getVarValue(Forcondition.get(0).getLexeme()));
+			// temp2 = Integer.parseInt(getVarValue(Forcondition.get(2).getLexeme()));
 			
 			while(start > end) {
-    			if (forTokens.get(0).getLexeme().equals("System.out.println")) {
-    				printConsole(forTokens);
-    				start-=1;
-    				//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
-    			}
-    			
-
-    			else {
-    				throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
-    			}
+				if (forTokens.get(0).getLexeme().equals("System.out.println")) {
+					printConsole(forTokens);
+					
+					Variable variable = new Variable();
+					variable = getVar(Forcondition.get(1).getLexeme());
+					variable.value = Integer.toString(decrementVar(Integer.parseInt(variable.value)));
+					boolean varExists = false;
+					int index = 0;
+					Iterator<Variable> iterator = variables.iterator();
+					Variable temp = new Variable();
+					
+					while(iterator.hasNext()) {
+						Variable var = iterator.next();
+						if (var.name.equals(variable.name)) {
+							varExists = true;
+							iterator.remove();
+							temp.name = variable.name;
+							temp.type = variable.type;
+							temp.value = variable.value;
+		//					var.value = variable.value;
+		//					variables.add(var);
+						}
+					}
+					
+					variables.add(temp);
+					start-=1;
+					//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
+				}
 			}
+				Variable variable = new Variable();
+				variable = getVar(Forcondition.get(1).getLexeme());
+				variable.value = Integer.toString(decrementVar(Integer.parseInt(variable.value)));
+				boolean varExists = false;
+				int index = 0;
+				Iterator<Variable> iterator = variables.iterator();
+				
 			
-			break;
-/*					 
-*/					case ">=":
+				while(iterator.hasNext()) {
+					Variable var = iterator.next();
+					if (var.name.equals(variable.name)) {
+						varExists = true;
+						iterator.remove();
+		//				var.value = variable.value;
+		//				variables.add(var);
+					}
+				}
+		
+		//		else {
+		//			throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
+		//		}
+			
+		break;
+		
+		case ">=":
 			 start = 0;
 			 end = 0;
 			
@@ -513,6 +557,7 @@ public class Executer {
 				if(doesVarHaveValue(Forcondition.get(0).getLexeme())) {
 					start = Integer.parseInt(getVarValue(Forcondition.get(1).getLexeme()));
 				}
+				start = Integer.parseInt(Forcondition.get(3).getLexeme());
 			}
 			else {
 				start = Integer.parseInt(Forcondition.get(3).getLexeme());
@@ -526,22 +571,62 @@ public class Executer {
 			else {
 				end = Integer.parseInt(Forcondition.get(7).getLexeme());
 			}
-			 temp1 = Integer.parseInt(getVarValue(Forcondition.get(0).getLexeme()));
-			 temp2 = Integer.parseInt(getVarValue(Forcondition.get(2).getLexeme()));
+			// temp1 = Integer.parseInt(getVarValue(Forcondition.get(0).getLexeme()));
+			// temp2 = Integer.parseInt(getVarValue(Forcondition.get(2).getLexeme()));
 			
 			while(start >= end) {
-    			if (forTokens.get(0).getLexeme().equals("System.out.println")) {
-    				printConsole(forTokens);
-    				start-=1;
-    				//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
-    			}
-    			
-
-    			else {
-    				throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
-    			}
+				if (forTokens.get(0).getLexeme().equals("System.out.println")) {
+					printConsole(forTokens);
+					
+					Variable variable1 = new Variable();
+					variable1 = getVar(Forcondition.get(1).getLexeme());
+					variable1.value = Integer.toString(decrementVar(Integer.parseInt(variable1.value)));
+					boolean varExists1 = false;
+					 index = 0;
+					Iterator<Variable> iterator1 = variables.iterator();
+					Variable temp = new Variable();
+					
+					while(iterator1.hasNext()) {
+						Variable var = iterator1.next();
+						if (var.name.equals(variable1.name)) {
+							varExists1 = true;
+							iterator1.remove();
+							temp.name = variable1.name;
+							temp.type = variable1.type;
+							temp.value = variable1.value;
+		//					var.value = variable.value;
+		//					variables.add(var);
+						}
+					}
+					
+					variables.add(temp);
+					start-=1;
+					//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
+				}
 			}
-			break;
+				Variable variable1 = new Variable();
+				variable1 = getVar(Forcondition.get(1).getLexeme());
+				variable1.value = Integer.toString(decrementVar(Integer.parseInt(variable1.value)));
+				boolean varExists1 = false;
+				int index1 = 0;
+				Iterator<Variable> iterator1 = variables.iterator();
+				
+			
+				while(iterator1.hasNext()) {
+					Variable var = iterator1.next();
+					if (var.name.equals(variable1.name)) {
+						varExists1 = true;
+						iterator1.remove();
+		//				var.value = variable.value;
+		//				variables.add(var);
+					}
+				}
+		
+		//		else {
+		//			throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
+		//		}
+			
+		break;
 /*					
 			break;
 		case "==":
@@ -585,63 +670,136 @@ public class Executer {
 						while(start < end) {
 		        			if (forTokens.get(0).getLexeme().equals("System.out.println")) {
 		        				printConsole(forTokens);
+		        				
+		        				Variable variable = new Variable();
+								variable = getVar(Forcondition.get(1).getLexeme());
+		        				variable.value = Integer.toString(incrementVar(Integer.parseInt(variable.value)));
+	    						boolean varExists = false;
+	    						int index = 0;
+		        				Iterator<Variable> iterator = variables.iterator();
+	    						Variable temp = new Variable();
+	    						
+	    						while(iterator.hasNext()) {
+	    							Variable var = iterator.next();
+	    							if (var.name.equals(variable.name)) {
+	    								varExists = true;
+	    								iterator.remove();
+	    								temp.name = variable.name;
+	    								temp.type = variable.type;
+	    								temp.value = variable.value;
+//	    								var.value = variable.value;
+//	    								variables.add(var);
+	    							}
+	    						}
+	    						
+	    						variables.add(temp);
 		        				start+=1;
 		        				//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
 			    			}
-			    			
+		        			
+		        			Variable variable = new Variable();
+							variable = getVar(Forcondition.get(1).getLexeme());
+	        				variable.value = Integer.toString(incrementVar(Integer.parseInt(variable.value)));
+    						boolean varExists = false;
+    						int index = 0;
+	        				Iterator<Variable> iterator = variables.iterator();
+    						
+    						
+    						while(iterator.hasNext()) {
+    							Variable var = iterator.next();
+    							if (var.name.equals(variable.name)) {
+    								varExists = true;
+    								iterator.remove();
+//    								var.value = variable.value;
+//    								variables.add(var);
+    							}
+    						}
  
-			    			else {
-			    				throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
-			    			}
+			    	//		else {
+			    	//			throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
+			    	//		}
 						}
 						
 						break;
 /*					 
 */					case "<=":
-						 start = 0;
-						 end = 0;
-						
-						if (doesVarExist(Forcondition.get(1).getLexeme())) {
-							if(doesVarHaveValue(Forcondition.get(0).getLexeme())) {
-								start = Integer.parseInt(getVarValue(Forcondition.get(1).getLexeme()));
-							}
-						}
-						else {
-							start = Integer.parseInt(Forcondition.get(3).getLexeme());
-						}
-						
-						if (doesVarExist(Forcondition.get(7).getLexeme())) {
-							if(doesVarHaveValue(Forcondition.get(7).getLexeme())) {
-									end = Integer.parseInt(getVarValue(Forcondition.get(7).getLexeme()));	
-								}
-						}
-						else {
-							end = Integer.parseInt(Forcondition.get(7).getLexeme());
-						}
-						 temp1 = Integer.parseInt(getVarValue(Forcondition.get(0).getLexeme()));
-						 temp2 = Integer.parseInt(getVarValue(Forcondition.get(2).getLexeme()));
-						
-						while(start <= end) {
-		        			if (forTokens.get(0).getLexeme().equals("System.out.println")) {
-		        				printConsole(forTokens);
-		        				start+=1;
-		        				//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
-			    			}
-			    			
- 
-			    			else {
-			    				throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
-			    			}
-						}
-						break;
-/*					
-						break;
-					case "==":
-						while(Integer.parseInt(Forcondition.get(0).getLexeme()) == Integer.parseInt(Forcondition.get(2).getLexeme())) {
+							 start = 0;
+							 end = 0;
 							
-						}
+							if (doesVarExist(Forcondition.get(1).getLexeme())) {
+								if(doesVarHaveValue(Forcondition.get(0).getLexeme())) {
+									start = Integer.parseInt(getVarValue(Forcondition.get(1).getLexeme()));
+								}
+							}
+							else {
+								start = Integer.parseInt(Forcondition.get(3).getLexeme());
+							}
+							
+							if (doesVarExist(Forcondition.get(7).getLexeme())) {
+								if(doesVarHaveValue(Forcondition.get(7).getLexeme())) {
+										end = Integer.parseInt(getVarValue(Forcondition.get(7).getLexeme()));	
+									}
+							}
+							else {
+								end = Integer.parseInt(Forcondition.get(7).getLexeme());
+							}
+							 temp1 = Integer.parseInt(getVarValue(Forcondition.get(0).getLexeme()));
+							 temp2 = Integer.parseInt(getVarValue(Forcondition.get(2).getLexeme()));
+							
+							while(start <= end) {
+								if (forTokens.get(0).getLexeme().equals("System.out.println")) {
+									printConsole(forTokens);
+									
+									Variable variable = new Variable();
+									variable = getVar(Forcondition.get(1).getLexeme());
+									variable.value = Integer.toString(incrementVar(Integer.parseInt(variable.value)));
+									boolean varExists = false;
+									int index = 0;
+									Iterator<Variable> iterator = variables.iterator();
+									Variable temp = new Variable();
+									
+									while(iterator.hasNext()) {
+										Variable var = iterator.next();
+										if (var.name.equals(variable.name)) {
+											varExists = true;
+											iterator.remove();
+											temp.name = variable.name;
+											temp.type = variable.type;
+											temp.value = variable.value;
+						//					var.value = variable.value;
+						//					variables.add(var);
+										}
+									}
+									
+									variables.add(temp);
+									start+=1;
+									//whileTokens = new ArrayList<Token>(whileTokens.subList(5, whileTokens.size()));
+								}
+								
+								Variable variable = new Variable();
+								variable = getVar(Forcondition.get(1).getLexeme());
+								variable.value = Integer.toString(incrementVar(Integer.parseInt(variable.value)));
+								boolean varExists = false;
+								int index = 0;
+								Iterator<Variable> iterator = variables.iterator();
+								
+								
+								while(iterator.hasNext()) {
+									Variable var = iterator.next();
+									if (var.name.equals(variable.name)) {
+										varExists = true;
+										iterator.remove();
+						//				var.value = variable.value;
+						//				variables.add(var);
+									}
+								}
+						
+						//		else {
+						//			throwException("Exception: Variable (" + Forcondition.get(0).getLexeme() + "has not been declared, at line # " + Forcondition.get(0).getRowNumber());
+						//		}
+							}
 						break;
-	*/				
+					
 				}
 				//return whileTokens;
 			}
