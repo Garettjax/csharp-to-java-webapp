@@ -52,6 +52,9 @@
 			  <option value="4">Sample 4</option>
 			</select>
 		</div>
+		<div>
+			<input type="file" id="fileSelect" name="fileSelect" accept=".cs,.txt">
+		</div>
 		<form class="form-group" action="/login.do" method="post">
 			<div class="float-container">
 				<span>
@@ -73,6 +76,7 @@
 	    //editor.session.setMode("ace/mode/javascript");
 	    editor1.session.setValue(initial);
 	    var textarea = document.getElementById("codeSubmit");
+	    var fileSelect = document.getElementById("fileSelect");
 	    
 	    
 	    var editor2 = ace.edit("translation");
@@ -82,6 +86,15 @@
 	    editor1.getSession().on("change", function () {
 	    	//debugger;
 	    	textarea.value = editor1.getSession().getValue();
+	    });
+	    
+	    fileSelect.addEventListener('change', function () {
+	    	const file = this.files[0];
+	    	var reader = new FileReader();
+	    	reader.readAsText(file);
+	    	reader.onload = function() {
+	    		editor1.getSession().setValue(reader.result);
+	    	}
 	    });
 	    
 	    function populateCode() {
