@@ -198,6 +198,7 @@ public class Executer {
 					index++;
 				}
 				return new ArrayList<Token>(tokens.subList(4, tokens.size()));
+				
 			}
 			//Declaration/assignment
 			else if(tokens.get(2).getLexeme().equals("=")&&(tokens.get(1).getTokenType().equals("IDENTIFIER"))) {//checks if it is the assignment statement = and the name

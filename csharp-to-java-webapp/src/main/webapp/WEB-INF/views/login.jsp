@@ -13,7 +13,7 @@
   integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
   crossorigin="anonymous"></script>
   
-<title>Insert title here</title>
+<title>C# to Java</title>
 <style type="text/css" media="screen">
     #codeEditor { 
         top: 0;
@@ -43,8 +43,16 @@
 </head>
 <body>
 	<div>
+		<div>
+			<label for="samples">Sample Programs</label>
+			<select name="samples" id="samples" onchange="populateCode()">
+			  <option value="1">Sample 1</option>
+			  <option value="2">Sample 2</option>
+			  <option value="3">Sample 3</option>
+			  <option value="4">Sample 4</option>
+			</select>
+		</div>
 		<form class="form-group" action="/login.do" method="post">
-			<label class="offset-1" for="codeInput">Input C# Code</label>
 			<div class="float-container">
 				<span>
 					<div class="float-child" id="codeEditor" class="offset-1" ></div>
@@ -65,7 +73,7 @@
 	    //editor.session.setMode("ace/mode/javascript");
 	    editor1.session.setValue(initial);
 	    var textarea = document.getElementById("codeSubmit");
-	    //textarea.value = editor1.getValue();
+	    
 	    
 	    var editor2 = ace.edit("translation");
 	    editor2.setTheme("ace/theme/monokai");
@@ -75,6 +83,32 @@
 	    	//debugger;
 	    	textarea.value = editor1.getSession().getValue();
 	    });
+	    
+	    function populateCode() {
+	    	//debugger;
+	    	var sample1 = 'namespace Loops\n{\n\tinternal class Program\n\t{\n\t\tpublic static void Main(string[] args)\n\t\t{\n\t\tint test1;\n\t\ttest1 = 2;\n\t\tstring test4 = "something here";\n\t\twhile (test1 <= 6)\n\t\t{\n\t\t\tConsole.WriteLine(test1);\n\t\t\ttest1++;\n\t\t}\n\t\tif (test1 <= 10){\n\t\tConsole.WriteLine("If statement passed");\n\t\t}\n\t}\n\t}\n}';
+	    	var sample2 = "";
+	    	var sample3 = "";
+	    	var sample4 = "";
+	    	var sample5 = "";
+	    	
+	    	var sampleSelect = document.getElementById("samples");
+	    	var selection = sampleSelect.value;
+	    	
+	    	
+	    	if (selection === "1") {
+	    		editor1.session.setValue(sample1);
+	    	} else if (selection === "2") {
+	    		editor1.session.setValue("2");
+	    	} else if (selection === "3") {
+	    		editor1.session.setValue("3");
+	    	} else if (selection === "4") {
+	    		editor1.session.setValue("4");
+	    	} else if (selection === "5") {
+	    		editor1.session.setValue("5");
+	    	}
+	    	//alert(selection);
+	    }
 	</script>
 	<div class="offset-1 col-10"  style='background-color:#F1F1F1;'>
 	<%! public String value = "", code = "";%>
