@@ -50,6 +50,7 @@
 			  <option value="2">Sample 2</option>
 			  <option value="3">Sample 3</option>
 			  <option value="4">Sample 4</option>
+			  <option value="5">Sample 5</option>
 			</select>
 		</div>
 		<div>
@@ -99,11 +100,11 @@
 	    
 	    function populateCode() {
 	    	//debugger;
-	    	var sample1 = 'namespace Loops\n{\n\tinternal class Program\n\t{\n\t\tpublic static void Main(string[] args)\n\t\t{\n\t\tint test1;\n\t\ttest1 = 2;\n\t\tstring test4 = "something here";\n\t\twhile (test1 <= 6)\n\t\t{\n\t\t\tConsole.WriteLine(test1);\n\t\t\ttest1++;\n\t\t}\n\t\tif (test1 <= 10){\n\t\tConsole.WriteLine("If statement passed");\n\t\t}\n\t}\n\t}\n}';
-	    	var sample2 = "";
-	    	var sample3 = "";
-	    	var sample4 = "";
-	    	var sample5 = "";
+	    	var sample1 = 'namespace Loops\n{\n\tinternal class Program\n\t{\n\t\tpublic static void Main(string[] args)\n\t\t{\n\t\t\tint myVar;\n\t\t\tmyVar = 2;\n\n\t\t\tString pass = "Test passed";\n\n\t\t\tif (myVar <= 10) {\n\t\t\t\tConsole.WriteLine(pass);\n\t\t\t}\n\t\t}\n\t}\n}';
+	    	var sample2 = 'namespace Loops\n{\n\tinternal class Program\n\t{\n\t\tpublic static void Main(string[] args)\n\t\t{\n\t\t\tint myVar;\n\t\t\tmyVar = 2;\n\n\t\t\tString pass = "Test passed";\n\n\t\t\tif (myVar <= 10) {\n\t\t\t\tConsole.WriteLine(pass);\n\t\t\t}\n\n\t\t\tif (myVar > 2) {\n\t\t\t\tConsole.WriteLine("Will not print");\n\t\t\t}\n\t\t}\n\t}\n}';
+	    	var sample3 = 'namespace Loops\n{\n\tinternal class Program\n\t{\n\t\tpublic static void Main(string[] args)\n\t\t{\n\n\t\t\tint zeroIndex = 0;\n\n\t\t\twhile (zeroIndex <= 10)\n\t\t\t{\n\t\t\t\tConsole.WriteLine(zeroIndex);\n\t\t\t\tzeroIndex++;\n\t\t\t}\n\t\t\tif(zeroIndex > 5){\n\t\t\t\tConsole.WriteLine("Test passed");\n\t\t\t}\n\t\t}\n\t}\n}';
+	    	var sample4 = 'namespace Loops\n{\n\tinternal class Program\n\t{\n\t\tpublic static void Main(string[] args)\n\t\t{\n\n\t\t\tint zeroIndex = 0;\n\n\t\t\tfor(int i = 0; i < 4; i++) {\n\t\t\t\tConsole.WriteLine("Print 4 times");\n\t\t\t}\n\t\t}\n\t}\n}';
+	    	var sample5 = 'namespace Loops\n{\n\tinternal class Program\n\t{\n\t\tpublic static void Main(string[] args)\n\t\t{\n\n\t\t\tint zeroIndex = 0;\n\n\t\t\twhile (zeroIndex <= 10)\n\t\t\t{\n\t\t\t\tConsole.WriteLine(zeroIndex);\n\t\t\t\tzeroIndex++;\n\t\t\t}\n\t\t\tif(zeroIndex > 5){\n\t\t\t\tConsole.WriteLine("Test passed");\n\t\t\t}\n\t\t\tfor(int j = 0; j < 1; j++){\n\t\t\t\tConsole.WriteLine("For loop execution");\n\t\t\t}\n\t\t}\n\t}\n}';
 	    	
 	    	var sampleSelect = document.getElementById("samples");
 	    	var selection = sampleSelect.value;
@@ -112,13 +113,13 @@
 	    	if (selection === "1") {
 	    		editor1.session.setValue(sample1);
 	    	} else if (selection === "2") {
-	    		editor1.session.setValue("2");
+	    		editor1.session.setValue(sample2);
 	    	} else if (selection === "3") {
-	    		editor1.session.setValue("3");
+	    		editor1.session.setValue(sample3);
 	    	} else if (selection === "4") {
-	    		editor1.session.setValue("4");
+	    		editor1.session.setValue(sample4);
 	    	} else if (selection === "5") {
-	    		editor1.session.setValue("5");
+	    		editor1.session.setValue(sample5);
 	    	}
 	    	//alert(selection);
 	    }
